@@ -1,0 +1,2 @@
+[console_scripts]
+kluky-mcp = kluky_mcp.server:main

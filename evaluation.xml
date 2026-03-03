@@ -1,0 +1,42 @@
+<evaluation>
+  <qa_pair>
+    <question>What status value is returned by kluky_health_check for challenge=probe-001?</question>
+    <answer>NOT_IMPLEMENTED</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>What tool value is returned by kluky_health_check for challenge=probe-001?</question>
+    <answer>kluky_health_check</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>What status value is returned by kluky_get_documents when called with empty params?</question>
+    <answer>NOT_IMPLEMENTED</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>What tool value is returned by kluky_get_documents when called with empty params?</question>
+    <answer>kluky_get_documents</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>When calling kluky_find_tool with any tool_name, what placeholder prefix starts the response?</question>
+    <answer>NOT_IMPLEMENTED</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>When calling kluky_get_document_info with document_id=1, what placeholder prefix starts the response?</question>
+    <answer>NOT_IMPLEMENTED</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>When calling kluky_add_record_if_not_exists with any payload, what placeholder prefix starts the response?</question>
+    <answer>NOT_IMPLEMENTED</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>When calling kluky_update_record with any payload, what placeholder prefix starts the response?</question>
+    <answer>NOT_IMPLEMENTED</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>What is the placeholder response from kluky_list_tools?</question>
+    <answer>[]</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>What is the placeholder response from kluky_get_all_records_for_name?</question>
+    <answer>[]</answer>
+  </qa_pair>
+</evaluation>
