@@ -19,6 +19,9 @@ dev = [
     "ty>=0.0.1a27",
 ]
 
+[project.scripts]
+kluky-mcp = "main:main"
+
 [tool.ruff]
 exclude = [
     ".bzr",
