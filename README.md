@@ -36,7 +36,7 @@ kluky_mcp/
 ## Run locally
 
 ```bash
-uv run python -m kluky_mcp.server
+uv run --python 3.13 python -m kluky_mcp.server
 ```
 
 ## Import choice: FastMCP-native
@@ -54,8 +54,8 @@ Note: FastMCP still depends on the underlying `mcp` protocol package transitivel
 ## CLI smoke test
 
 ```bash
-uv run fastmcp list --command "uv run python -m kluky_mcp.server"
-uv run fastmcp call --command "uv run python -m kluky_mcp.server" --target kluky_health_check --input-json '{"params":{"challenge":"probe-001"}}'
+uv run fastmcp list --command "uv run --python 3.13 python -m kluky_mcp.server"
+uv run fastmcp call --command "uv run --python 3.13 python -m kluky_mcp.server" --target kluky_health_check --input-json '{"params":{"challenge":"probe-001"}}'
 ```
 
 ## OpenCode config
@@ -68,7 +68,7 @@ uv run fastmcp call --command "uv run python -m kluky_mcp.server" --target kluky
   "mcp": {
     "kluky": {
       "type": "local",
-      "command": ["uv", "run", "python", "-m", "kluky_mcp.server"],
+      "command": ["uv", "run", "--python", "3.13", "python", "-m", "kluky_mcp.server"],
       "enabled": true
     }
   }

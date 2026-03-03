@@ -3,7 +3,7 @@
   "mcp": {
     "kluky": {
       "type": "local",
-      "command": ["uv", "run", "python", "-m", "kluky_mcp.server"],
+      "command": ["uv", "run", "--python", "3.13", "python", "-m", "kluky_mcp.server"],
       "enabled": true
     }
   }
