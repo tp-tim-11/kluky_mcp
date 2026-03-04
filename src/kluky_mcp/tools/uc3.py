@@ -3,13 +3,13 @@
 from fastmcp import FastMCP
 
 from kluky_mcp.constants import TOOL_NAMESPACE
+from kluky_mcp.db import get_db_connection
 from kluky_mcp.formatters import format_not_implemented
 from kluky_mcp.models import (
     AddRecordIfNotExistsInput,
     GetAllRecordsForNameInput,
     UpdateRecordInput,
 )
-from kluky_mcp.pg_connection import get_db_connection
 
 
 def register(mcp: FastMCP) -> None:
@@ -44,7 +44,11 @@ def register(mcp: FastMCP) -> None:
                         params.repaired_with,
                     ),
                 )
-                record_id = cur.fetchone()[0]
+                row = cur.fetchone()
+                if row is None:
+                    conn.rollback()
+                    return "Error creating record: insert did not return an ID"
+                record_id = row[0]
                 conn.commit()
             return f"Record created successfully with ID: {record_id}"
         except Exception as e:
