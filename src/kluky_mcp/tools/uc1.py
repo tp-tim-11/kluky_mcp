@@ -12,6 +12,20 @@ from kluky_mcp.models import (
     ShowToolPositionInput,
 )
 
+# adresy pre kazde ESP na wifine 
+# v esp kode si zoberu staticke ip
+
+# import socket
+ESP32_MAP: dict[str, str] = {
+    "A": "192.168.43.101",
+    "B": "192.168.43.102",
+    "C": "192.168.43.103",
+    "D": "192.168.43.104",
+}
+
+# server <-> esp = tcp comm
+ESP32_PORT = 8080
+ESP32_TIMEOUT = 5
 
 def register(mcp: FastMCP) -> None:
     """Register UC1 tools."""
@@ -82,8 +96,42 @@ def register(mcp: FastMCP) -> None:
         },
     )
     def kluky_show_tool_position(params: ShowToolPositionInput) -> str:
-        """Shell placeholder for showing tool position by coordinates."""
-        return format_not_implemented("show_tool_position", params.model_dump())
+        """Blinks the LED above the tool on the correct ESP32 strip."""
+
+        sector = params.sector.upper()
+        pin = params.x
+        led = params.y
+        # sector letter -> ESP32 ip
+        ip = ESP32_MAP.get(sector)
+
+        # zakladne checks
+        if ip is None:
+            return f"Sector is not in the current ESP sector mapping."
+        if led>63:
+            return f"Led number does not exist on the current led strips"
+        if sector not in ESP32_MAP:
+            return f"Sector does not exist in the current "
+        
+        return f"nieco sa dojebalo, kazdopadne, tu mas params: \n sector:{sector}, pin:{pin}, led:{led}, ip:{ip}"
+        
+        message = f"PIN:{pin},LED:{led}\n"
+
+        # pripojenie na esp neni mozne lebo neni esp, tak zatial zakomentovane
+        # vraciam iba dojebalo sa
+
+        # try:
+        #     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        #         s.settimeout(ESP32_TIMEOUT)
+        #         s.connect((ip, ESP32_PORT))
+        #         s.sendall(message.encode())
+        #         response = s.recv(1024).decode().strip()
+        #         return f"ESP32 {sector} ({ip}) responded: {response}"
+        # except TimeoutError:
+        #     return f"FAILURE: ESP32 {sector} ({ip}) did not respond within {ESP32_TIMEOUT}s"
+        # except ConnectionRefusedError:
+        #     return f"FAILURE: ESP32 {sector} ({ip}) refused connection."
+        # except OSError as e:
+        #     return f"FAILURE: could not reach ESP32 {sector} ({ip}) — {e}"
 
     @mcp.tool(
         name=f"{TOOL_NAMESPACE}_change_tool_status",
