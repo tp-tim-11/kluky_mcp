@@ -1,6 +1,7 @@
 """Pydantic input models for MCP tools."""
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+from typing import Optional
 
 
 class BaseInput(BaseModel):
@@ -47,21 +48,21 @@ class ShowToolPositionInput(BaseInput):
     x: int = Field(..., description="Horizontal coordinate in the sector map.")
     y: int = Field(..., description="Vertical coordinate in the sector map.")
 
-
 class ChangeToolStatusInput(BaseInput):
     """Input for changing tool status."""
 
-    tool_name: str = Field(..., description="Tool name.", min_length=1, max_length=120)
+    tool_name: str = Field(..., min_length=1, max_length=120)
+
     status: str = Field(
         ...,
-        description="Target status value, for example in_place or loaned.",
+        description="Target status value.",
         min_length=1,
         max_length=32,
     )
-    name_of_person: str = Field(
-        ...,
-        description="Person related to the status update.",
-        min_length=1,
+
+    name_of_person: Optional[str] = Field(
+        None,
+        description="Person who borrowed the tool (required only when status = borrowed).",
         max_length=120,
     )
 
