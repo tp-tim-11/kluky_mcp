@@ -18,7 +18,7 @@ Requires-Dist: pytest-asyncio>=0.23.0; extra == "dev"
 
 Blueprint-aligned MCP server skeleton for the Kluky team.
 
-The repository is intentionally a scaffold. Tool contracts, naming, and packaging are production-shaped, while most business logic stays unimplemented for teammates to fill in.
+The repository is intentionally a scaffold. Tool contracts, naming, and packaging are production-shaped, while business logic is intentionally unimplemented for the team to fill in.
 
 ## Project layout
 
@@ -52,7 +52,7 @@ kluky_mcp/
 ## Run locally
 
 ```bash
-uv run python -m kluky_mcp.server
+uv run --python 3.13 python -m kluky_mcp.server
 ```
 
 ## Import choice: FastMCP-native
@@ -70,8 +70,8 @@ Note: FastMCP still depends on the underlying `mcp` protocol package transitivel
 ## CLI smoke test
 
 ```bash
-uv run fastmcp list --command "uv run python -m kluky_mcp.server"
-uv run fastmcp call --command "uv run python -m kluky_mcp.server" --target kluky_health_check --input-json '{"params":{"challenge":"probe-001"}}'
+uv run fastmcp list --command "uv run --python 3.13 python -m kluky_mcp.server"
+uv run fastmcp call --command "uv run --python 3.13 python -m kluky_mcp.server" --target kluky_health_check --input-json '{"params":{"challenge":"probe-001"}}'
 ```
 
 ## OpenCode config
@@ -84,7 +84,7 @@ uv run fastmcp call --command "uv run python -m kluky_mcp.server" --target kluky
   "mcp": {
     "kluky": {
       "type": "local",
-      "command": ["uv", "run", "python", "-m", "kluky_mcp.server"],
+      "command": ["uv", "run", "--python", "3.13", "python", "-m", "kluky_mcp.server"],
       "enabled": true
     }
   }
@@ -98,19 +98,22 @@ uv run fastmcp call --command "uv run python -m kluky_mcp.server" --target kluky
 - `uc3`: `kluky_add_record_if_not_exists`, `kluky_get_all_records_for_name`, `kluky_update_record`
 - `health`: `kluky_health_check`
 
-## Deterministic health check
+## Placeholder behavior
 
-`kluky_health_check` returns a deterministic host-bound SHA-256 proof.
+All tools currently return placeholders only. This includes `kluky_health_check`.
 
-For the same machine and the same challenge, `proof` is stable and repeatable.
+Examples:
 
-## Test-only document catalog
+- `kluky_find_tool`, `kluky_show_tool_position`, `kluky_change_tool_status`,
+  `kluky_add_record_if_not_exists`, and `kluky_update_record` return a
+  `NOT_IMPLEMENTED: ...` string.
+- `kluky_get_documents` and `kluky_health_check` return a placeholder JSON object.
+- `kluky_list_tools` and `kluky_get_all_records_for_name` return empty lists.
 
-`kluky_get_documents` returns data labeled `TEST_PURPOSE_DOCUMENT_CATALOG`.
-
-This catalog is static and explicitly for deterministic integration testing.
+`api_client.py` is also a stub and intentionally raises/returns
+`NOT_IMPLEMENTED` placeholders until real integration is added.
 
 ## Test and evaluation skeletons
 
-- `tests/` contains skipped test skeletons for teammates to implement.
+- `tests/` contains skipped test skeletons to implement.
 - `evaluation.xml` contains a 10-question evaluation scaffold for future LLM evaluation runs.

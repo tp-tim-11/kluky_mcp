@@ -9,6 +9,7 @@ from kluky_mcp.models import (
     GetAllRecordsForNameInput,
     UpdateRecordInput,
 )
+from kluky_mcp.pg_connection import get_db_connection
 
 
 def register(mcp: FastMCP) -> None:
@@ -25,8 +26,32 @@ def register(mcp: FastMCP) -> None:
         },
     )
     def kluky_add_record_if_not_exists(params: AddRecordIfNotExistsInput) -> str:
-        """Shell placeholder for adding a new record if missing."""
-        return format_not_implemented("add_record_if_not_exists", params.model_dump())
+        """Add a new service record to the database."""
+        conn = get_db_connection()
+        try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO records (first_name, last_name, subject_name, what_i_am_fixing, repaired_with)
+                    VALUES (%s, %s, %s, %s, %s)
+                    RETURNING id
+                    """,
+                    (
+                        params.first_name,
+                        params.last_name,
+                        params.subject_name,
+                        params.what_i_am_fixing,
+                        params.repaired_with,
+                    ),
+                )
+                record_id = cur.fetchone()[0]
+                conn.commit()
+            return f"Record created successfully with ID: {record_id}"
+        except Exception as e:
+            conn.rollback()
+            return f"Error creating record: {e}"
+        finally:
+            conn.close()
 
     @mcp.tool(
         name=f"{TOOL_NAMESPACE}_get_all_records_for_name",

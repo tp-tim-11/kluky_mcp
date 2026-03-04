@@ -5,6 +5,7 @@ src/kluky_mcp/api_client.py
 src/kluky_mcp/constants.py
 src/kluky_mcp/formatters.py
 src/kluky_mcp/models.py
+src/kluky_mcp/pg_connection.py
 src/kluky_mcp/server.py
 src/kluky_mcp.egg-info/PKG-INFO
 src/kluky_mcp.egg-info/SOURCES.txt
