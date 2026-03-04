@@ -104,13 +104,17 @@ class AddRecordIfNotExistsInput(BaseInput):
     )
     what_i_am_fixing: str = Field(
         ...,
-        description="Description of what is being fixed.",
+        description="Description stored into work_desc.",
+        min_length=1,
+    )
+    raw_text: str = Field(
+        ...,
+        description="Original full text from the user, stored into raw_data.",
         min_length=1,
     )
     repaired_with: list[str] = Field(
-        ...,
-        description="List of tools or materials used for repair.",
-        min_length=1,
+        default_factory=list,
+        description="Optional list of tools or materials used for repair.",
     )
 
 
@@ -126,16 +130,20 @@ class UpdateRecordInput(BaseInput):
 
     record_id: str = Field(
         ...,
-        description="Record identifier in the service records list.",
+        description="repair_records.id",
         min_length=1,
     )
     what_i_am_fixing: str = Field(
         ...,
-        description="Updated repair description.",
+        description="New text appended into work_desc.",
+        min_length=1,
+    )
+    raw_text: str = Field(
+        ...,
+        description="New original full text appended into raw_data.",
         min_length=1,
     )
     repaired_with: list[str] = Field(
-        ...,
-        description="Updated list of used tools or materials.",
-        min_length=1,
+        default_factory=list,
+        description="Optional list of used tools or materials.",
     )

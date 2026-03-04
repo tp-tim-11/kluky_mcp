@@ -3,10 +3,11 @@ pyproject.toml
 src/kluky_mcp/__init__.py
 src/kluky_mcp/api_client.py
 src/kluky_mcp/constants.py
+src/kluky_mcp/db.py
 src/kluky_mcp/formatters.py
 src/kluky_mcp/models.py
-src/kluky_mcp/pg_connection.py
 src/kluky_mcp/server.py
+src/kluky_mcp/settings.py
 src/kluky_mcp.egg-info/PKG-INFO
 src/kluky_mcp.egg-info/SOURCES.txt
 src/kluky_mcp.egg-info/dependency_links.txt
@@ -18,6 +19,7 @@ src/kluky_mcp/tools/health.py
 src/kluky_mcp/tools/uc1.py
 src/kluky_mcp/tools/uc2.py
 src/kluky_mcp/tools/uc3.py
+tests/test_db.py
 tests/test_health.py
 tests/test_server.py
 tests/test_uc1_tools.py
