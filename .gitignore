@@ -11,3 +11,6 @@ __pycache__/
 
 .env
 .coverage
+
+.DS_Store
+src/.DS_Store
