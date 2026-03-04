@@ -4,11 +4,13 @@ from fastmcp import FastMCP
 
 from kluky_mcp.constants import TOOL_NAMESPACE
 from kluky_mcp.db import get_db_connection
+
 from kluky_mcp.models import (
     AddRecordIfNotExistsInput,
     GetAllRecordsForNameInput,
     UpdateRecordInput,
 )
+
 
 
 def _append_text(previous: str | None, new_value: str) -> str:
@@ -225,6 +227,7 @@ def register(mcp: FastMCP) -> None:
                     work_desc=params.what_i_am_fixing.strip(),
                     raw_data=params.raw_text.strip(),
                 )
+
 
                 tool_ids = _get_existing_tool_ids(cur, params.repaired_with)
                 _attach_tools_to_log(cur, log_id, tool_ids)
