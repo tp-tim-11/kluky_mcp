@@ -105,7 +105,7 @@ class AddRecordIfNotExistsInput(BaseInput):
     )
     what_i_am_fixing: str = Field(
         ...,
-        description="Description stored into work_desc.",
+        description="What exact part is user fixing on item.",
         min_length=1,
     )
     raw_text: str = Field(
@@ -134,9 +134,14 @@ class UpdateRecordInput(BaseInput):
         description="repair_records.id",
         min_length=1,
     )
+    log_id: str = Field(
+        ...,
+        description="repair_logs.id",
+        min_length=1,
+    )
     what_i_am_fixing: str = Field(
         ...,
-        description="New text appended into work_desc.",
+        description="What exact part is user fixing on item.",
         min_length=1,
     )
     raw_text: str = Field(
