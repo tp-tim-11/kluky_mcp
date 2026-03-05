@@ -78,7 +78,7 @@ uv run fastmcp call --command "uv run --python 3.13 python -m kluky_mcp.server" 
 ## Tool groups
 
 - `uc1`: `kluky_list_tools`, `kluky_find_tool`, `kluky_show_tool_position`, `kluky_change_tool_status`
-- `uc2`: `kluky_get_documents`, `kluky_get_document_info`
+- `uc2`: `kluky_get_documents`, `kluky_get_guide`, `kluky_get_document_info`
 - `uc3`: `kluky_add_record_if_not_exists`, `kluky_get_all_records_for_name`, `kluky_update_record`
 - `health`: `kluky_health_check`
 

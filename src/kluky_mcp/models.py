@@ -48,6 +48,7 @@ class ShowToolPositionInput(BaseInput):
     x: int = Field(..., description="Horizontal coordinate in the sector map.")
     y: int = Field(..., description="Vertical coordinate in the sector map.")
 
+
 class ChangeToolStatusInput(BaseInput):
     """Input for changing tool status."""
 
@@ -67,30 +68,46 @@ class ChangeToolStatusInput(BaseInput):
     )
 
 
+class GetGuideInput(BaseInput):
+    """Input for semantic UC02 guide retrieval."""
+
+    queries: list[str] = Field(
+        ...,
+        description="One or more normalized user question variants.",
+        min_length=1,
+    )
+    top_k: int = Field(
+        default=8,
+        description="Maximum number of ranked search hits to return.",
+        ge=1,
+        le=20,
+    )
+    manual_doc_id: str | None = Field(
+        default=None,
+        description="Optional parent manual doc_id filter.",
+        min_length=1,
+        max_length=255,
+    )
+
+
 class GetDocumentsInput(BaseInput):
-    """Input for listing deterministic test documents."""
+    """Input for listing available indexed documents."""
 
 
 class GetDocumentInfoInput(BaseInput):
-    """Input for retrieving document details by name or ID."""
+    """Input for retrieving document details by doc_id and optional unit."""
 
-    name: str | None = Field(
-        default=None,
-        description="Document name from the test catalog.",
+    doc_id: str = Field(
+        ...,
+        description="Document text identifier from stored index (doc_units.doc_id).",
         min_length=1,
-        max_length=120,
+        max_length=255,
     )
-    document_id: int | None = Field(
+    unit_no: int | None = Field(
         default=None,
-        description="Document numeric identifier from the test catalog.",
+        description="Optional unit number filter to return a single section/unit.",
         ge=1,
     )
-
-    @model_validator(mode="after")
-    def validate_identifier(self) -> "GetDocumentInfoInput":
-        if self.name is None and self.document_id is None:
-            raise ValueError("Provide either name or document_id.")
-        return self
 
 
 class AddRecordIfNotExistsInput(BaseInput):
