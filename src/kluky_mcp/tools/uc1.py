@@ -87,15 +87,15 @@ def register(mcp: FastMCP) -> None:
 
         # zakladne checks
         if ip is None:
-            return f"Sector is not in the current ESP sector mapping."
+            return "Sector is not in the current ESP sector mapping."
         if led>63:
-            return f"Led number does not exist on the current led strips"
+            return "Led number does not exist on the current led strips"
         if sector not in ESP32_MAP:
-            return f"Sector does not exist in the current "
-        
+            return "Sector does not exist in the current "
+
         return f"nieco sa dojebalo, kazdopadne, tu mas params: \n sector:{sector}, pin:{pin}, led:{led}, ip:{ip}"
-        
-        message = f"PIN:{pin},LED:{led}\n"
+
+        message = f"PIN:{pin},LED:{led}\n"  # noqa: F841
 
         # pripojenie na esp neni mozne lebo neni esp, tak zatial zakomentovane
         # vraciam iba dojebalo sa

@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     db_user: str = "postgres"
     db_password: str = ""
     db_sslmode: str = "prefer"
+    pool_mode: str = "session"
     pageindex_api_key: str = ""
     model_config = SettingsConfigDict(env_file=".env", env_prefix="", extra="ignore")
 
