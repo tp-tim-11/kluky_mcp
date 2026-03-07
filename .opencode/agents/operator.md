@@ -33,6 +33,7 @@ Pri každej požiadavke:
 
 **Tooly:** 
 - `kluky_list_tools`
+- `kluky_show_tool_position`
 - `kluky_change_tool_status`
 
 **Dôležité:**
@@ -42,6 +43,13 @@ Pri každej požiadavke:
   - `available` – náradie je dostupné na svojom mieste
   - `borrowed` – náradie je požičané
   - `broken` – náradie je pokazené
+- Keď sa používateľ pýta na stavy, ale keď mu o nich hovoríš, prekladaj mu ich do slovenčiny a nepíš tam nič v angličtine
+
+**Workflow, keď sa používateľ opýta na miesto náradia:**
+1. Najprv zavolaj `kluky_list_tools`.
+2. Najdi spravny status
+3. Použi jeho `pozicia`.
+4. Zavolaj `kluky_show_tool_position`.
 
 **Workflow pre zmenu stavu náradia:**
 
