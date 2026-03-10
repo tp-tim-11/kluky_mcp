@@ -4,6 +4,7 @@ from fastmcp import FastMCP
 
 from kluky_mcp.constants import SERVICE_NAME
 from kluky_mcp.tools.health import register as register_health
+from kluky_mcp.tools.uc0 import register as register_uc0
 from kluky_mcp.tools.uc1 import register as register_uc1
 from kluky_mcp.tools.uc2 import register as register_uc2
 from kluky_mcp.tools.uc3 import register as register_uc3
@@ -14,6 +15,7 @@ def create_server() -> FastMCP:
     mcp = FastMCP(SERVICE_NAME)
 
     register_health(mcp)
+    register_uc0(mcp)
     register_uc1(mcp)
     register_uc2(mcp)
     register_uc3(mcp)

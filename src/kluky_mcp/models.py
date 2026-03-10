@@ -20,6 +20,8 @@ class HealthCheckInput(BaseInput):
         max_length=256,
     )
 
+class NewSessionInput(BaseInput):
+    """Input for starting a new session."""
 
 class ListToolsInput(BaseInput):
     """Input for listing available shop tools."""

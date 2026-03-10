@@ -30,6 +30,16 @@ Pri každej požiadavke:
 
 ## Schopnosti (capabilities)
 
+### 0. Nová session 
+
+**Kedy:** Keď používateľ nejakým spôsobom požiada o nový chat, začatie novej session alebo vymazanie histórie.
+**Tooly**
+
+- `new_session`
+
+**Dôležité:**
+Vypíš do chatu len to, čo ti vráti funkcia to znamena 'new_session'
+
 ### 1. Lokalizácia náradia a dielov
 **Kedy:** Používateľ hľadá náradie alebo diel v inventári, prípadne chce zmeniť stav náradia.
 

@@ -8,6 +8,7 @@ Všetky inštrukcie sú rozdelené do modulárnej štruktúry v `.opencode/`:
 
 | **Operátor** | `agents/operator.md` | Hlavný agent — obsluhuje požiadavky používateľov cez MCP tooly |
 
+### Tools (`.src/kluky_mcp/tools`)
 
 ## Rýchly prehľad
 
