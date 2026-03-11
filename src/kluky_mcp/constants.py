@@ -1,7 +1,6 @@
 """Shared constants for the Kluky MCP server."""
 
 SERVICE_NAME = "kluky_mcp"
-TOOL_NAMESPACE = "kluky"
 
 CHARACTER_LIMIT = 12_000
 NOT_IMPLEMENTED_PREFIX = "NOT_IMPLEMENTED"
