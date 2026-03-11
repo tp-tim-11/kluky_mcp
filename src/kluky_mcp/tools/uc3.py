@@ -2,7 +2,7 @@
 
 from fastmcp import FastMCP
 
-from kluky_mcp.constants import TOOL_NAMESPACE
+from kluky_mcp.constants import tool_name
 from kluky_mcp.db import get_db_connection
 from kluky_mcp.models import (
     AddRecordIfNotExistsInput,
@@ -17,6 +17,7 @@ def _normalize_label(value: str | None) -> str:
     if not text:
         return ""
     return " ".join(word[:1].upper() + word[1:].lower() for word in text.split(" "))
+
 
 def _append_text(previous: str | None, new_value: str) -> str:
     """Append new text to previous text separated by a newline."""
@@ -126,7 +127,7 @@ def _get_or_create_repair_record_id(cur, user_id: int, item_id: int) -> int:
 def _insert_repair_log(
     cur,
     record_id: int,
-    part_id:int,
+    part_id: int,
     work_desc: str,
     raw_data: str,
 ) -> int:
@@ -141,11 +142,12 @@ def _insert_repair_log(
     )
     return cur.fetchone()[0]
 
+
 def _update_repair_log(
     cur,
     record_id: int,
-    log_id:int,
-    part_id:int,
+    log_id: int,
+    part_id: int,
     work_desc: str,
     raw_data: str,
 ) -> int:
@@ -163,6 +165,7 @@ def _update_repair_log(
         (record_id, part_id, work_desc, raw_data, log_id),
     )
     return cur.fetchone()[0]
+
 
 def _normalize_tool_names(tool_names: list[str]) -> list[str]:
     """Strip, remove empties, and deduplicate while preserving order."""
@@ -217,6 +220,8 @@ def _attach_tools_to_log(cur, log_id: int, tool_ids: list[int]) -> None:
             """,
             (log_id, tool_id),
         )
+
+
 def _get_or_create_part_id(cur, item_id: int, part_name: str) -> int:
     """
     Create (or reuse) a part for the given item, return parts.id.
@@ -254,12 +259,11 @@ def _get_or_create_part_id(cur, item_id: int, part_name: str) -> int:
     return row[0]
 
 
-
 def register(mcp: FastMCP) -> None:
     """Register UC3 record-management tools."""
 
     @mcp.tool(
-        name=f"{TOOL_NAMESPACE}_add_record_if_not_exists",
+        name=tool_name("add_record_if_not_exists"),
         annotations={
             "title": "Add Record If Not Exists",
             "readOnlyHint": False,
@@ -268,7 +272,7 @@ def register(mcp: FastMCP) -> None:
             "openWorldHint": True,
         },
     )
-    def kluky_add_record_if_not_exists(params: AddRecordIfNotExistsInput) -> str:
+    def add_record_if_not_exists(params: AddRecordIfNotExistsInput) -> str:
         """
         Create (or reuse) the repair_records header for user+item
         and add a new repair_logs row.
@@ -287,11 +291,11 @@ def register(mcp: FastMCP) -> None:
                 )
                 item_id = _get_or_create_item_id(cur, params.subject_name)
                 record_id = _get_or_create_repair_record_id(cur, user_id, item_id)
-                part_id = _get_or_create_part_id(cur,item_id,params.what_i_am_fixing)
+                part_id = _get_or_create_part_id(cur, item_id, params.what_i_am_fixing)
                 log_id = _insert_repair_log(
                     cur,
                     record_id=record_id,
-                    part_id = part_id,
+                    part_id=part_id,
                     work_desc=params.raw_text.strip(),
                     raw_data=params.raw_text.strip(),
                 )
@@ -308,7 +312,7 @@ def register(mcp: FastMCP) -> None:
             conn.close()
 
     @mcp.tool(
-        name=f"{TOOL_NAMESPACE}_get_all_records_for_name",
+        name=tool_name("get_all_records_for_name"),
         annotations={
             "title": "Get All Records For Name",
             "readOnlyHint": True,
@@ -317,7 +321,7 @@ def register(mcp: FastMCP) -> None:
             "openWorldHint": False,
         },
     )
-    def kluky_get_all_records_for_name(
+    def get_all_records_for_name(
         params: GetAllRecordsForNameInput,
     ) -> list[dict[str, object]]:
         """
@@ -414,7 +418,7 @@ def register(mcp: FastMCP) -> None:
             conn.close()
 
     @mcp.tool(
-        name=f"{TOOL_NAMESPACE}_update_record",
+        name=tool_name("update_record"),
         annotations={
             "title": "Update Record",
             "readOnlyHint": False,
@@ -423,7 +427,7 @@ def register(mcp: FastMCP) -> None:
             "openWorldHint": True,
         },
     )
-    def kluky_update_record(params: UpdateRecordInput) -> str:
+    def update_record(params: UpdateRecordInput) -> str:
         """
         Update an existing repair_logs row for an existing repair_records header.
 

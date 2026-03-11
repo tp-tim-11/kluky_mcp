@@ -2,7 +2,7 @@
 
 from fastmcp import FastMCP
 
-from kluky_mcp.constants import TOOL_NAMESPACE
+from kluky_mcp.constants import tool_name
 from kluky_mcp.db import get_db_connection
 from kluky_mcp.models import (
     ChangeToolStatusInput,
@@ -10,7 +10,7 @@ from kluky_mcp.models import (
     ShowToolPositionInput,
 )
 
-# adresy pre kazde ESP na wifine 
+# adresy pre kazde ESP na wifine
 # v esp kode si zoberu staticke ip
 
 # import socket
@@ -25,11 +25,12 @@ ESP32_MAP: dict[str, str] = {
 ESP32_PORT = 8080
 ESP32_TIMEOUT = 5
 
+
 def register(mcp: FastMCP) -> None:
     """Register UC1 tools."""
 
     @mcp.tool(
-        name=f"{TOOL_NAMESPACE}_list_tools",
+        name=tool_name("list_tools"),
         annotations={
             "title": "List Tools",
             "readOnlyHint": True,
@@ -38,7 +39,7 @@ def register(mcp: FastMCP) -> None:
             "openWorldHint": False,
         },
     )
-    def kluky_list_tools(params: ListToolsInput) -> list[str]:
+    def list_tools(params: ListToolsInput) -> list[str]:
         """List all available tools from inventory with id, name, status and position."""
         _ = params
         conn = get_db_connection()
@@ -67,7 +68,7 @@ def register(mcp: FastMCP) -> None:
             conn.close()
 
     @mcp.tool(
-        name=f"{TOOL_NAMESPACE}_show_tool_position",
+        name=tool_name("show_tool_position"),
         annotations={
             "title": "Show Tool Position",
             "readOnlyHint": True,
@@ -76,7 +77,7 @@ def register(mcp: FastMCP) -> None:
             "openWorldHint": False,
         },
     )
-    def kluky_show_tool_position(params: ShowToolPositionInput) -> str:
+    def show_tool_position(params: ShowToolPositionInput) -> str:
         """Blinks the LED above the tool on the correct ESP32 strip."""
 
         sector = params.sector.upper()
@@ -88,7 +89,7 @@ def register(mcp: FastMCP) -> None:
         # zakladne checks
         if ip is None:
             return "Sector is not in the current ESP sector mapping."
-        if led>63:
+        if led > 63:
             return "Led number does not exist on the current led strips"
         if sector not in ESP32_MAP:
             return "Sector does not exist in the current "
@@ -115,7 +116,7 @@ def register(mcp: FastMCP) -> None:
         #     return f"FAILURE: could not reach ESP32 {sector} ({ip}) — {e}"
 
     @mcp.tool(
-        name=f"{TOOL_NAMESPACE}_change_tool_status",
+        name=tool_name("change_tool_status"),
         annotations={
             "title": "Change Tool Status",
             "readOnlyHint": False,
@@ -124,7 +125,7 @@ def register(mcp: FastMCP) -> None:
             "openWorldHint": True,
         },
     )
-    def kluky_change_tool_status(params: ChangeToolStatusInput) -> str:
+    def change_tool_status(params: ChangeToolStatusInput) -> str:
         """Update tool status and optionally who borrowed it."""
         conn = get_db_connection()
 
@@ -156,7 +157,9 @@ def register(mcp: FastMCP) -> None:
                 conn.commit()
 
                 if params.status == "loaned":
-                    return f"Tool '{params.tool_name}' loaned to {params.name_of_person}."
+                    return (
+                        f"Tool '{params.tool_name}' loaned to {params.name_of_person}."
+                    )
                 else:
                     return f"Tool '{params.tool_name}' status changed to '{params.status}'."
 
