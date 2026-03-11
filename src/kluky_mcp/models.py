@@ -22,6 +22,15 @@ class HealthCheckInput(BaseInput):
 
 class NewSessionInput(BaseInput):
     """Input for starting a new session."""
+class SendTTSResponseInput(BaseInput):
+    """Input for sending a text-to-speech response."""
+
+    text: str = Field(
+        ...,
+        description="Text to be converted to speech and spoken.",
+        min_length=1,
+        max_length=1000,
+    )
 
 class ListToolsInput(BaseInput):
     """Input for listing available shop tools."""

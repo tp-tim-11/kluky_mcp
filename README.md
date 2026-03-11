@@ -78,7 +78,7 @@ uv run fastmcp call --command "uv run --python 3.13 python -m kluky_mcp.server" 
 
 ## Tool groups
 
-- `uc0`: `new_session`
+- `uc0`: `new_session`, `send_tts_response`
 - `uc1`: `list_tools`, `show_tool_position`, `change_tool_status`
 - `uc2`: `get_documents`, `get_document_info`
 - `uc3`: `add_record_if_not_exists`, `get_all_records_for_name`, `update_record`
