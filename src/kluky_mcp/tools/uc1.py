@@ -24,6 +24,19 @@ ESP32_MAP: dict[str, str] = {
 ESP32_PORT = 8080
 ESP32_TIMEOUT = 5
 
+STATUS_TRANSLATION = {
+    "available": "Na mieste",
+    "borrowed": "Požičané",
+    "broken": "Pokazené",
+}
+
+
+def translate_status(status: str | None) -> str:
+    """Translate status to Slovak for user-facing output."""
+    if status is None:
+        return "-"
+    return STATUS_TRANSLATION.get(status, status)
+
 
 def register(mcp: FastMCP) -> None:
     """Register UC1 tools."""
@@ -59,7 +72,7 @@ def register(mcp: FastMCP) -> None:
                     return ["No tools found."]
 
                 return [
-                    f"{r[0]} | {r[1]} | {r[2]} | {r[3]} | borrowed_by: {r[4] or 'None'}"
+                    f"{r[0]} | {r[1]} | {r[2]} | {translate_status(r[3])} | Výpožičia: {r[4] or '-'}"
                     for r in rows
                 ]
 
@@ -155,12 +168,11 @@ def register(mcp: FastMCP) -> None:
 
                 conn.commit()
 
-                if params.status == "loaned":
-                    return (
-                        f"Tool '{params.tool_name}' loaned to {params.name_of_person}."
-                    )
+                if params.status == "borrowed":
+                    return f"Náradie '{params.tool_name}' požičané {params.name_of_person}."
                 else:
-                    return f"Tool '{params.tool_name}' status changed to '{params.status}'."
+                    translated = translate_status(params.status)
+                    return f"Náradie '{params.tool_name}' - stav: {translated}."
 
         finally:
             conn.close()
