@@ -1,29 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "default_agent": "operator",
-  "provider": {
-    "litellm": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "LiteLLM",
-      "options": {
-        "baseURL": "https://litellm.blockfinlab.xyz/v1",
-        "apiKey": "sk-oTB0bzy2yT9unVXn982SWQ"
-      },
-
-      "models": {
-        "gpt-4.1-nano-fiit": { "name": "GPT-4.1 Nano FIIT" },
-        "gpt-4.1-mini-fiit": { "name": "GPT-4.1 Mini FIIT" },
-        "gpt-4.1-fiit": { "name": "GPT-4.1 FIIT" },
-        "gpt-5-fiit": { "name": "GPT-5 FIIT" },
-
-        "claude-haiku-4.5-fiit": { "name": "Claude Haiku 4.5 FIIT" },
-        "claude-sonnet-4.5-fiit": { "name": "Claude Sonnet 4.5 FIIT" },
-
-        "whisper-fiit": { "name": "Whisper FIIT" }
-      }
-    }
-  },
-  "model": "litellm/gpt-4.1-fiit",
   "mcp": {
     "kluky": {
       "type": "local",
