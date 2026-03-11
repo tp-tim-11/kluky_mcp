@@ -2,7 +2,7 @@
 
 from fastmcp import FastMCP
 
-from kluky_mcp.constants import NOT_IMPLEMENTED_PREFIX, tool_name
+from kluky_mcp.constants import NOT_IMPLEMENTED_PREFIX, TOOL_NAMESPACE
 from kluky_mcp.models import HealthCheckInput
 
 
@@ -10,7 +10,7 @@ def register(mcp: FastMCP) -> None:
     """Register health-check tooling."""
 
     @mcp.tool(
-        name=tool_name("health_check"),
+        name=f"{TOOL_NAMESPACE}_health_check",
         annotations={
             "title": "Kluky Health Check",
             "readOnlyHint": True,
@@ -23,6 +23,6 @@ def register(mcp: FastMCP) -> None:
         """Shell placeholder for MCP connectivity checks."""
         return {
             "status": NOT_IMPLEMENTED_PREFIX,
-            "tool": tool_name("health_check"),
+            "tool": f"{TOOL_NAMESPACE}_health_check",
             "challenge": params.challenge,
         }

@@ -5,7 +5,7 @@ from typing import Any
 
 from fastmcp import FastMCP
 
-from kluky_mcp.constants import tool_name
+from kluky_mcp.constants import TOOL_NAMESPACE
 from kluky_mcp.db import get_db_connection
 from kluky_mcp.models import GetDocumentInfoInput, GetDocumentsInput
 from kluky_mcp.tools.uc02_utils.pageIndexRetrieval import (
@@ -187,7 +187,7 @@ def register(mcp: FastMCP) -> None:
     """Register UC2 document tools."""
 
     @mcp.tool(
-        name=tool_name("get_documents"),
+        name=f"{TOOL_NAMESPACE}_get_documents",
         annotations={
             "title": "Get Documents",
             "readOnlyHint": True,
@@ -227,7 +227,7 @@ def register(mcp: FastMCP) -> None:
         }
 
     @mcp.tool(
-        name=tool_name("get_document_info"),
+        name=f"{TOOL_NAMESPACE}_get_document_info",
         annotations={
             "title": "Get Document Info",
             "readOnlyHint": True,

@@ -2,7 +2,7 @@
 
 from fastmcp import FastMCP
 
-from kluky_mcp.constants import tool_name
+from kluky_mcp.constants import TOOL_NAMESPACE
 from kluky_mcp.db import get_db_connection
 from kluky_mcp.models import (
     AddRecordIfNotExistsInput,
@@ -263,7 +263,7 @@ def register(mcp: FastMCP) -> None:
     """Register UC3 record-management tools."""
 
     @mcp.tool(
-        name=tool_name("add_record_if_not_exists"),
+        name=f"{TOOL_NAMESPACE}_add_record_if_not_exists",
         annotations={
             "title": "Add Record If Not Exists",
             "readOnlyHint": False,
@@ -312,7 +312,7 @@ def register(mcp: FastMCP) -> None:
             conn.close()
 
     @mcp.tool(
-        name=tool_name("get_all_records_for_name"),
+        name=f"{TOOL_NAMESPACE}_get_all_records_for_name",
         annotations={
             "title": "Get All Records For Name",
             "readOnlyHint": True,
@@ -418,7 +418,7 @@ def register(mcp: FastMCP) -> None:
             conn.close()
 
     @mcp.tool(
-        name=tool_name("update_record"),
+        name=f"{TOOL_NAMESPACE}_update_record",
         annotations={
             "title": "Update Record",
             "readOnlyHint": False,

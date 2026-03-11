@@ -2,7 +2,7 @@
 
 from fastmcp import FastMCP
 
-from kluky_mcp.constants import tool_name
+from kluky_mcp.constants import TOOL_NAMESPACE
 from kluky_mcp.db import get_db_connection
 from kluky_mcp.models import (
     ChangeToolStatusInput,
@@ -30,7 +30,7 @@ def register(mcp: FastMCP) -> None:
     """Register UC1 tools."""
 
     @mcp.tool(
-        name=tool_name("list_tools"),
+        name=f"{TOOL_NAMESPACE}_list_tools",
         annotations={
             "title": "List Tools",
             "readOnlyHint": True,
@@ -68,7 +68,7 @@ def register(mcp: FastMCP) -> None:
             conn.close()
 
     @mcp.tool(
-        name=tool_name("show_tool_position"),
+        name=f"{TOOL_NAMESPACE}_show_tool_position",
         annotations={
             "title": "Show Tool Position",
             "readOnlyHint": True,
@@ -116,7 +116,7 @@ def register(mcp: FastMCP) -> None:
         #     return f"FAILURE: could not reach ESP32 {sector} ({ip}) — {e}"
 
     @mcp.tool(
-        name=tool_name("change_tool_status"),
+        name=f"{TOOL_NAMESPACE}_change_tool_status",
         annotations={
             "title": "Change Tool Status",
             "readOnlyHint": False,
