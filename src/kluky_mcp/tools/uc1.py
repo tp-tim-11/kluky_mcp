@@ -72,7 +72,7 @@ def register(mcp: FastMCP) -> None:
                     return ["No tools found."]
 
                 return [
-                    f"{r[0]} | {r[1]} | {r[2]} | {translate_status(r[3])} | Výpožičia: {r[4] or '-'}"
+                    f"{r[0]} | {r[1]} | {r[2]} | {translate_status(r[3])} | Vypožičal: {r[4] or '-'}"
                     for r in rows
                 ]
 
