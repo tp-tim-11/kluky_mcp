@@ -60,7 +60,7 @@ def register(mcp: FastMCP) -> None:
             with conn.cursor() as cur:
                 cur.execute(
                     """
-                    SELECT id, name, COALESCE(esp, '') AS pozicia, status, borrowed_by
+                    SELECT id, name, esp, pin, led,  status, borrowed_by
                     FROM resources
                     WHERE deleted = false
                     ORDER BY id
@@ -73,7 +73,7 @@ def register(mcp: FastMCP) -> None:
                     return ["No tools found."]
 
                 return [
-                    f"{r[0]} | {r[1]} | {r[2]} | {translate_status(r[3])} | Vypožičal: {r[4] or '-'}"
+                    f"{r[0]} | {r[1]} | {r[2]} | {r[3]} | {r[4]} {translate_status(r[5])} | Vypožičal: {r[6] or '-'}"
                     for r in rows
                 ]
 
