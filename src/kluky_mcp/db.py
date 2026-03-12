@@ -15,7 +15,7 @@ print(
     settings.db_password,
     settings.db_port,
     settings.db_sslmode,
-    settings.pool_mode,
+    settings.db_pool_mode,
 )
 
 
@@ -27,10 +27,12 @@ def get_db_connection() -> PgConnection:
         "user": settings.db_user,
         "password": settings.db_password,
         "port": settings.db_port,
-        "options": f"-c pool_mode={settings.pool_mode}",
     }
     if settings.db_sslmode:
         conn_params["sslmode"] = settings.db_sslmode
+
+    if settings.db_pool_mode:
+        conn_params["options"] = f"-c pool_mode={settings.db_pool_mode}"
 
     conn = psycopg2.connect(**conn_params)
     with conn.cursor() as cur:

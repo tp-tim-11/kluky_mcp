@@ -195,16 +195,16 @@ def _get_existing_tool_ids(cur, tool_names: list[str]) -> list[int]:
 
     cur.execute(
         """
-        SELECT id, nazov
+        SELECT id, name
         FROM resources
         WHERE deleted = false
-          AND nazov = ANY(%s)
+          AND name = ANY(%s)
         """,
         (cleaned,),
     )
     rows = cur.fetchall()
 
-    name_to_id = {nazov: tool_id for tool_id, nazov in rows}
+    name_to_id = {name: tool_id for tool_id, name in rows}
     return [name_to_id[name] for name in cleaned if name in name_to_id]
 
 
@@ -348,7 +348,7 @@ def register(mcp: FastMCP) -> None:
                         rl.faults,
                         rl.raw_data,
                         COALESCE(
-                            array_agg(DISTINCT res.nazov ORDER BY res.nazov)
+                            array_agg(DISTINCT res.name ORDER BY res.name)
                                 FILTER (WHERE res.id IS NOT NULL),
                             ARRAY[]::text[]
                         ) AS repaired_with

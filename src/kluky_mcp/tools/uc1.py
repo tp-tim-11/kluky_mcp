@@ -25,9 +25,9 @@ ESP32_PORT = 8080
 ESP32_TIMEOUT = 5
 
 STATUS_TRANSLATION = {
-    "available": "Na mieste",
-    "borrowed": "Požičané",
-    "broken": "Pokazené",
+    "AVAILABLE": "Na mieste",
+    "BORROWED": "Požičané",
+    "BROKEN": "Pokazené",
 }
 
 
@@ -35,7 +35,8 @@ def translate_status(status: str | None) -> str:
     """Translate status to Slovak for user-facing output."""
     if status is None:
         return "-"
-    return STATUS_TRANSLATION.get(status, status)
+    normalized = status.strip().upper()
+    return STATUS_TRANSLATION.get(normalized, status)
 
 
 def register(mcp: FastMCP) -> None:
@@ -59,7 +60,7 @@ def register(mcp: FastMCP) -> None:
             with conn.cursor() as cur:
                 cur.execute(
                     """
-                    SELECT id, nazov, COALESCE(esp, '') AS pozicia, status, vypozicane_komu
+                    SELECT id, name, COALESCE(esp, '') AS pozicia, status, borrowed_by
                     FROM resources
                     WHERE deleted = false
                     ORDER BY id
@@ -140,6 +141,7 @@ def register(mcp: FastMCP) -> None:
     def change_tool_status(params: ChangeToolStatusInput) -> str:
         """Update tool status and optionally who borrowed it."""
         conn = get_db_connection()
+        status = params.status.strip().upper()
 
         try:
             with conn.cursor() as cur:
@@ -148,19 +150,19 @@ def register(mcp: FastMCP) -> None:
                     UPDATE resources
                     SET
                         status = %s,
-                        vypozicane_komu = CASE
-                            WHEN %s = 'borrowed' THEN %s
+                        borrowed_by = CASE
+                            WHEN %s = 'BORROWED' THEN %s
                             ELSE NULL
                         END
                     WHERE deleted = false
                       AND (
                         id::text = %s
-                        OR nazov = %s
+                        OR name = %s
                       )
                     """,
                     (
-                        params.status,
-                        params.status,
+                        status,
+                        status,
                         params.name_of_person,
                         params.tool_name,
                         params.tool_name,
@@ -172,10 +174,10 @@ def register(mcp: FastMCP) -> None:
 
                 conn.commit()
 
-                if params.status == "borrowed":
+                if status == "BORROWED":
                     return f"Náradie '{params.tool_name}' požičané {params.name_of_person}."
                 else:
-                    translated = translate_status(params.status)
+                    translated = translate_status(status)
                     return f"Náradie '{params.tool_name}' - stav: {translated}."
 
         finally:
