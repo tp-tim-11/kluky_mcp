@@ -10,7 +10,7 @@ from kluky_mcp.models import (
     ShowToolPositionInput,
 )
 
-# adresy pre kazde ESP na wifine 
+# adresy pre kazde ESP na wifine
 # v esp kode si zoberu staticke ip
 
 # import socket
@@ -24,6 +24,7 @@ ESP32_MAP: dict[str, str] = {
 # server <-> esp = tcp comm
 ESP32_PORT = 8080
 ESP32_TIMEOUT = 5
+
 
 def register(mcp: FastMCP) -> None:
     """Register UC1 tools."""
@@ -46,7 +47,7 @@ def register(mcp: FastMCP) -> None:
             with conn.cursor() as cur:
                 cur.execute(
                     """
-                    SELECT id, nazov, pozicia, status, vypozicane_komu
+                    SELECT id, nazov, COALESCE(esp, '') AS pozicia, status, vypozicane_komu
                     FROM resources
                     WHERE deleted = false
                     ORDER BY id
@@ -88,13 +89,13 @@ def register(mcp: FastMCP) -> None:
         # zakladne checks
         if ip is None:
             return f"Sector is not in the current ESP sector mapping."
-        if led>63:
+        if led > 63:
             return f"Led number does not exist on the current led strips"
         if sector not in ESP32_MAP:
             return f"Sector does not exist in the current "
-        
+
         return f"nieco sa dojebalo, kazdopadne, tu mas params: \n sector:{sector}, pin:{pin}, led:{led}, ip:{ip}"
-        
+
         message = f"PIN:{pin},LED:{led}\n"
 
         # pripojenie na esp neni mozne lebo neni esp, tak zatial zakomentovane
@@ -139,13 +140,17 @@ def register(mcp: FastMCP) -> None:
                             WHEN %s = 'borrowed' THEN %s
                             ELSE NULL
                         END
-                    WHERE id = %s
-                    AND deleted = false
+                    WHERE deleted = false
+                      AND (
+                        id::text = %s
+                        OR nazov = %s
+                      )
                     """,
                     (
                         params.status,
                         params.status,
                         params.name_of_person,
+                        params.tool_name,
                         params.tool_name,
                     ),
                 )
@@ -155,8 +160,10 @@ def register(mcp: FastMCP) -> None:
 
                 conn.commit()
 
-                if params.status == "loaned":
-                    return f"Tool '{params.tool_name}' loaned to {params.name_of_person}."
+                if params.status == "borrowed":
+                    return (
+                        f"Tool '{params.tool_name}' loaned to {params.name_of_person}."
+                    )
                 else:
                     return f"Tool '{params.tool_name}' status changed to '{params.status}'."
 
