@@ -21,6 +21,7 @@ kluky_mcp/
 │       └── tools/
 │           ├── __init__.py
 │           ├── health.py
+│           ├── uc0.py
 │           ├── uc1.py
 │           ├── uc2.py
 │           └── uc3.py
@@ -55,7 +56,7 @@ Note: FastMCP still depends on the underlying `mcp` protocol package transitivel
 
 ```bash
 uv run fastmcp list --command "uv run --python 3.13 python -m kluky_mcp.server"
-uv run fastmcp call --command "uv run --python 3.13 python -m kluky_mcp.server" --target kluky_health_check --input-json '{"params":{"challenge":"probe-001"}}'
+uv run fastmcp call --command "uv run --python 3.13 python -m kluky_mcp.server" --target health_check --input-json '{"params":{"challenge":"probe-001"}}'
 ```
 
 ## OpenCode config
@@ -77,22 +78,23 @@ uv run fastmcp call --command "uv run --python 3.13 python -m kluky_mcp.server" 
 
 ## Tool groups
 
-- `uc1`: `kluky_list_tools`, `kluky_find_tool`, `kluky_show_tool_position`, `kluky_change_tool_status`
-- `uc2`: `kluky_get_documents`, `kluky_get_guide`, `kluky_get_document_info`
-- `uc3`: `kluky_add_record_if_not_exists`, `kluky_get_all_records_for_name`, `kluky_update_record`
-- `health`: `kluky_health_check`
+- `uc0`: `new_session`, `send_tts_response`
+- `uc1`: `list_tools`, `show_tool_position`, `change_tool_status`
+- `uc2`: `get_documents`, `get_document_info`
+- `uc3`: `add_record_if_not_exists`, `get_all_records_for_name`, `update_record`
+- `health`: `health_check`
 
 ## Placeholder behavior
 
-All tools currently return placeholders only. This includes `kluky_health_check`.
+All tools currently return placeholders only. This includes `health_check`.
 
 Examples:
 
-- `kluky_find_tool`, `kluky_show_tool_position`, `kluky_change_tool_status`,
-  `kluky_add_record_if_not_exists`, and `kluky_update_record` return a
+- `show_tool_position`, `change_tool_status`,
+  `add_record_if_not_exists`, and `update_record` return a
   `NOT_IMPLEMENTED: ...` string.
-- `kluky_get_documents` and `kluky_health_check` return a placeholder JSON object.
-- `kluky_list_tools` and `kluky_get_all_records_for_name` return empty lists.
+- `get_documents` and `health_check` return a placeholder JSON object.
+- `list_tools` and `get_all_records_for_name` return empty lists.
 
 `api_client.py` is also a stub and intentionally raises/returns
 `NOT_IMPLEMENTED` placeholders until real integration is added.

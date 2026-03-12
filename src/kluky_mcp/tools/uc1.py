@@ -2,7 +2,6 @@
 
 from fastmcp import FastMCP
 
-from kluky_mcp.constants import TOOL_NAMESPACE
 from kluky_mcp.db import get_db_connection
 from kluky_mcp.models import (
     ChangeToolStatusInput,
@@ -25,12 +24,25 @@ ESP32_MAP: dict[str, str] = {
 ESP32_PORT = 8080
 ESP32_TIMEOUT = 5
 
+STATUS_TRANSLATION = {
+    "available": "Na mieste",
+    "borrowed": "Požičané",
+    "broken": "Pokazené",
+}
+
+
+def translate_status(status: str | None) -> str:
+    """Translate status to Slovak for user-facing output."""
+    if status is None:
+        return "-"
+    return STATUS_TRANSLATION.get(status, status)
+
 
 def register(mcp: FastMCP) -> None:
     """Register UC1 tools."""
 
     @mcp.tool(
-        name=f"{TOOL_NAMESPACE}_list_tools",
+        name="list_tools",
         annotations={
             "title": "List Tools",
             "readOnlyHint": True,
@@ -39,7 +51,7 @@ def register(mcp: FastMCP) -> None:
             "openWorldHint": False,
         },
     )
-    def kluky_list_tools(params: ListToolsInput) -> list[str]:
+    def list_tools(params: ListToolsInput) -> list[str]:
         """List all available tools from inventory with id, name, status and position."""
         _ = params
         conn = get_db_connection()
@@ -60,7 +72,7 @@ def register(mcp: FastMCP) -> None:
                     return ["No tools found."]
 
                 return [
-                    f"{r[0]} | {r[1]} | {r[2]} | {r[3]} | borrowed_by: {r[4] or 'None'}"
+                    f"{r[0]} | {r[1]} | {r[2]} | {translate_status(r[3])} | Vypožičal: {r[4] or '-'}"
                     for r in rows
                 ]
 
@@ -68,7 +80,7 @@ def register(mcp: FastMCP) -> None:
             conn.close()
 
     @mcp.tool(
-        name=f"{TOOL_NAMESPACE}_show_tool_position",
+        name="show_tool_position",
         annotations={
             "title": "Show Tool Position",
             "readOnlyHint": True,
@@ -77,7 +89,7 @@ def register(mcp: FastMCP) -> None:
             "openWorldHint": False,
         },
     )
-    def kluky_show_tool_position(params: ShowToolPositionInput) -> str:
+    def show_tool_position(params: ShowToolPositionInput) -> str:
         """Blinks the LED above the tool on the correct ESP32 strip."""
 
         sector = params.sector.upper()
@@ -88,15 +100,15 @@ def register(mcp: FastMCP) -> None:
 
         # zakladne checks
         if ip is None:
-            return f"Sector is not in the current ESP sector mapping."
+            return "Sector is not in the current ESP sector mapping."
         if led > 63:
-            return f"Led number does not exist on the current led strips"
+            return "Led number does not exist on the current led strips"
         if sector not in ESP32_MAP:
-            return f"Sector does not exist in the current "
+            return "Sector does not exist in the current "
 
         return f"nieco sa dojebalo, kazdopadne, tu mas params: \n sector:{sector}, pin:{pin}, led:{led}, ip:{ip}"
 
-        message = f"PIN:{pin},LED:{led}\n"
+        message = f"PIN:{pin},LED:{led}\n"  # noqa: F841
 
         # pripojenie na esp neni mozne lebo neni esp, tak zatial zakomentovane
         # vraciam iba dojebalo sa
@@ -116,7 +128,7 @@ def register(mcp: FastMCP) -> None:
         #     return f"FAILURE: could not reach ESP32 {sector} ({ip}) — {e}"
 
     @mcp.tool(
-        name=f"{TOOL_NAMESPACE}_change_tool_status",
+        name="change_tool_status",
         annotations={
             "title": "Change Tool Status",
             "readOnlyHint": False,
@@ -125,7 +137,7 @@ def register(mcp: FastMCP) -> None:
             "openWorldHint": True,
         },
     )
-    def kluky_change_tool_status(params: ChangeToolStatusInput) -> str:
+    def change_tool_status(params: ChangeToolStatusInput) -> str:
         """Update tool status and optionally who borrowed it."""
         conn = get_db_connection()
 
@@ -161,11 +173,10 @@ def register(mcp: FastMCP) -> None:
                 conn.commit()
 
                 if params.status == "borrowed":
-                    return (
-                        f"Tool '{params.tool_name}' loaned to {params.name_of_person}."
-                    )
+                    return f"Náradie '{params.tool_name}' požičané {params.name_of_person}."
                 else:
-                    return f"Tool '{params.tool_name}' status changed to '{params.status}'."
+                    translated = translate_status(params.status)
+                    return f"Náradie '{params.tool_name}' - stav: {translated}."
 
         finally:
             conn.close()

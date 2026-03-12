@@ -20,6 +20,17 @@ class HealthCheckInput(BaseInput):
         max_length=256,
     )
 
+class NewSessionInput(BaseInput):
+    """Input for starting a new session."""
+class SendTTSResponseInput(BaseInput):
+    """Input for sending a text-to-speech response."""
+
+    text: str = Field(
+        ...,
+        description="Text to be converted to speech and spoken.",
+        min_length=1,
+        max_length=1000,
+    )
 
 class ListToolsInput(BaseInput):
     """Input for listing available shop tools."""
@@ -68,8 +79,8 @@ class ChangeToolStatusInput(BaseInput):
     )
 
 
-class GetGuideInput(BaseInput):
-    """Input for semantic UC02 guide retrieval."""
+class GetDocumentsInput(BaseInput):
+    """Input for listing catalog candidates for documents."""
 
     queries: list[str] = Field(
         ...,
@@ -78,9 +89,9 @@ class GetGuideInput(BaseInput):
     )
     top_k: int = Field(
         default=8,
-        description="Maximum number of ranked search hits to return.",
+        description="Maximum number of catalog candidates to return.",
         ge=1,
-        le=20,
+        le=200,
     )
     manual_doc_id: str | None = Field(
         default=None,
@@ -90,16 +101,18 @@ class GetGuideInput(BaseInput):
     )
 
 
-class GetDocumentsInput(BaseInput):
-    """Input for listing available indexed documents."""
-
-
 class GetDocumentInfoInput(BaseInput):
     """Input for retrieving document details by doc_id and optional unit."""
 
-    doc_id: str = Field(
-        ...,
+    doc_id: str | None = Field(
+        default=None,
         description="Document text identifier from stored index (doc_units.doc_id).",
+        min_length=1,
+        max_length=255,
+    )
+    manual_name: str | None = Field(
+        default=None,
+        description="Manual file name (e.g. manual_Bicykle_SK.pdf) used when doc_id is not known.",
         min_length=1,
         max_length=255,
     )
@@ -108,6 +121,12 @@ class GetDocumentInfoInput(BaseInput):
         description="Optional unit number filter to return a single section/unit.",
         ge=1,
     )
+
+    @model_validator(mode="after")
+    def _validate_identifier(self) -> "GetDocumentInfoInput":
+        if not self.doc_id and not self.manual_name:
+            raise ValueError("Either 'doc_id' or 'manual_name' must be provided.")
+        return self
 
 
 class AddRecordIfNotExistsInput(BaseInput):

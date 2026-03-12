@@ -15,28 +15,24 @@ print(
     settings.db_password,
     settings.db_port,
     settings.db_sslmode,
+    settings.pool_mode,
 )
 
 
 def get_db_connection() -> PgConnection:
     """Create a database connection using environment variables."""
+    conn_params = {
+        "host": settings.db_host,
+        "database": settings.db_name,
+        "user": settings.db_user,
+        "password": settings.db_password,
+        "port": settings.db_port,
+        "options": f"-c pool_mode={settings.pool_mode}",
+    }
     if settings.db_sslmode:
-        conn = psycopg2.connect(
-            host=settings.db_host,
-            database=settings.db_name,
-            user=settings.db_user,
-            password=settings.db_password,
-            port=settings.db_port,
-            sslmode=settings.db_sslmode,
-        )
-    else:
-        conn = psycopg2.connect(
-            host=settings.db_host,
-            database=settings.db_name,
-            user=settings.db_user,
-            password=settings.db_password,
-            port=settings.db_port,
-        )
+        conn_params["sslmode"] = settings.db_sslmode
+
+    conn = psycopg2.connect(**conn_params)
     with conn.cursor() as cur:
         cur.execute("SET TIME ZONE 'Europe/Bratislava'")
     return conn

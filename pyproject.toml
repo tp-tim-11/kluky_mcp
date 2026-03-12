@@ -13,8 +13,8 @@ dependencies = [
     "httpx>=0.27.0",
     "pydantic>=2.10.6",
     "psycopg2-binary>=2.9.9",
-    "pageindex>=0.2.6",
     "markitdown>=0.1.5",
+    "pageindex",
 ]
 
 [project.optional-dependencies]
@@ -154,3 +154,6 @@ max-complexity = 10
 
 [tool.ruff.lint.isort]
 known-third-party = ["fastapi", "fastmcp", "httpx", "pydantic", "starlette"]
+
+[tool.uv.sources]
+pageindex = { git = "https://github.com/xovsonka/PageIndexKluky.git" }
