@@ -56,8 +56,8 @@ class ShowToolPositionInput(BaseInput):
         min_length=1,
         max_length=32,
     )
-    x: int = Field(..., description="Horizontal coordinate in the sector map.")
-    y: int = Field(..., description="Vertical coordinate in the sector map.")
+    pin: int = Field(..., description="Pin number the led strip is connected to.")
+    led: int = Field(..., description="Led number of the located tool.")
 
 
 class ChangeToolStatusInput(BaseInput):
