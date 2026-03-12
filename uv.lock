@@ -696,6 +696,7 @@ dependencies = [
     { name = "pageindex" },
     { name = "psycopg2-binary" },
     { name = "pydantic" },
+    { name = "pytest" },
 ]
 
 [package.optional-dependencies]
@@ -716,6 +717,7 @@ requires-dist = [
     { name = "pageindex", git = "https://github.com/xovsonka/PageIndexKluky.git" },
     { name = "psycopg2-binary", specifier = ">=2.9.9" },
     { name = "pydantic", specifier = ">=2.10.6" },
+    { name = "pytest", specifier = ">=8.0.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0" },
     { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.23.0" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.14.5" },

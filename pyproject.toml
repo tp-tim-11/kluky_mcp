@@ -15,6 +15,7 @@ dependencies = [
     "psycopg2-binary>=2.9.9",
     "markitdown>=0.1.5",
     "pageindex",
+    "pytest>=8.0.0",
 ]
 
 [project.optional-dependencies]
