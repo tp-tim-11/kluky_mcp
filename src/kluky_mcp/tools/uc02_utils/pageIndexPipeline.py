@@ -26,26 +26,17 @@ from .pageIndexUtils import (
 
 
 def _ensure_openai_env() -> None:
-    custom_key = os.getenv("open_ai_api_key", "").strip() or settings.open_ai_api_key
-    openai_key = os.getenv("OPENAI_API_KEY", "").strip()
 
-    effective_key = custom_key or openai_key
-    if not effective_key:
-        raise RuntimeError("Missing API key. Set open_ai_api_key or OPENAI_API_KEY.")
+    if not settings.open_ai_api_key:
+        print(settings.open_ai_api_key)
+        raise RuntimeError(
+            f"Missing API key. Set open_ai_api_key. {settings.open_ai_api_key}, {settings.open_ai_api_base}"
+        )
 
-    os.environ.setdefault("open_ai_api_key", effective_key)
-    os.environ.setdefault("CHATGPT_API_KEY", effective_key)
-    os.environ.setdefault("OPENAI_API_KEY", effective_key)
+    os.environ.setdefault("open_ai_api_key", settings.open_ai_api_key)
 
-    base_url = (
-        os.getenv("open_ai_api_base", "").strip()
-        or settings.open_ai_api_base
-        or os.getenv("OPENAI_BASE_URL", "").strip()
-    )
-    if base_url:
-        os.environ.setdefault("open_ai_api_base", base_url)
-        os.environ.setdefault("OPENAI_BASE_URL", base_url)
-        os.environ.setdefault("OPENAI_API_BASE", base_url)
+    base_url = settings.open_ai_api_base
+    os.environ.setdefault("open_ai_api_base", base_url)
 
 
 def _run_pageindex_document(input_path: str) -> dict[str, Any]:
@@ -457,9 +448,9 @@ def _tree_preview(tree: dict[str, Any]) -> dict[str, Any]:
             "doc_name": tree.get("doc_name"),
             "root_count": len(roots),
             "first_root_title": first.get("title") if isinstance(first, dict) else None,
-            "first_root_node_id": first.get("node_id")
-            if isinstance(first, dict)
-            else None,
+            "first_root_node_id": (
+                first.get("node_id") if isinstance(first, dict) else None
+            ),
         }
 
     return {
@@ -572,4 +563,3 @@ def ingest_with_pageindex(
         payload["tree_json"] = tree
 
     return payload
-
