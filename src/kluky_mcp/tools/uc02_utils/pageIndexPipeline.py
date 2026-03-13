@@ -33,10 +33,10 @@ def _ensure_openai_env() -> None:
             f"Missing API key. Set open_ai_api_key. {settings.open_ai_api_key}, {settings.open_ai_api_base}"
         )
 
-    os.environ.setdefault("open_ai_api_key", settings.open_ai_api_key)
+    os.environ.setdefault("OPENAI_API_KEY", settings.open_ai_api_key)
 
     base_url = settings.open_ai_api_base
-    os.environ.setdefault("open_ai_api_base", base_url)
+    os.environ.setdefault("OPENAI_BASE_URL", base_url)
 
 
 def _run_pageindex_document(input_path: str) -> dict[str, Any]:

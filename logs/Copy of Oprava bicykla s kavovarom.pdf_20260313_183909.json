@@ -1,0 +1,58 @@
+[
+  {
+    "total_page_number": 2
+  },
+  {
+    "total_token": 960
+  },
+  {
+    "toc_content": null,
+    "toc_page_list": [],
+    "page_index_given_in_toc": "no"
+  },
+  {
+    "message": "len(group_texts): 1"
+  },
+  {
+    "message": "generate_toc: [{'structure': '1', 'title': 'Ako sa opravuje bicykel k\u00e1vovarom', 'physical_index': '<physical_index_1>'}, {'structure': '1.1', 'title': 'F\u00e1za 1: Probl\u00e9m Jej bicykel', 'physical_index': '<physical_index_1>'}, {'structure': '1.2', 'title': 'F\u00e1za 2: Nastavovanie \u201cenergetickej \u00farovne\u201d', 'physical_index': '<physical_index_2>'}, {'structure': '1.3', 'title': 'F\u00e1za 3: \u201cProfesion\u00e1lna diagnostika\u201d', 'physical_index': '<physical_index_2>'}, {'structure': '1.4', 'title': 'F\u00e1za 4: Fin\u00e1lny v\u00fdsledok', 'physical_index': '<physical_index_2>'}]"
+  },
+  {
+    "message": "convert_physical_index_to_int: [{'structure': '1', 'title': 'Ako sa opravuje bicykel k\u00e1vovarom', 'physical_index': 1}, {'structure': '1.1', 'title': 'F\u00e1za 1: Probl\u00e9m Jej bicykel', 'physical_index': 1}, {'structure': '1.2', 'title': 'F\u00e1za 2: Nastavovanie \u201cenergetickej \u00farovne\u201d', 'physical_index': 2}, {'structure': '1.3', 'title': 'F\u00e1za 3: \u201cProfesion\u00e1lna diagnostika\u201d', 'physical_index': 2}, {'structure': '1.4', 'title': 'F\u00e1za 4: Fin\u00e1lny v\u00fdsledok', 'physical_index': 2}]"
+  },
+  {
+    "mode": "process_toc_with_page_numbers",
+    "accuracy": 0.8,
+    "incorrect_results": [
+      {
+        "list_index": 2,
+        "answer": "no",
+        "title": "F\u00e1za 2: Nastavovanie \u201cenergetickej \u00farovne\u201d",
+        "page_number": 2
+      }
+    ]
+  },
+  {
+    "message": "incorrect_results_and_range_logs: [{'list_index': 2, 'title': 'F\u00e1za 2: Nastavovanie \u201cenergetickej \u00farovne\u201d', 'prev_correct': 1, 'next_correct': 2}]"
+  },
+  {
+    "message": "invalid_results: []"
+  },
+  {
+    "message": "Checking title appearance in start concurrently"
+  },
+  {
+    "message": "Response: {'thinking': \"The section title 'F\u00e1za 1: Probl\u00e9m Jej bicykel' appears after some initial content, and the page_text begins with 'Ako sa ...', which is not the section title. The section title does not start at the very beginning of the page_text, as there are other contents before it.\", 'start_begin': 'no'}"
+  },
+  {
+    "message": "Response: {'thinking': \"The section title is 'F\u00e1za 3: \u201cProfesion\u00e1lna diagnostika\u201d'. In the page_text, the first occurrence of a phrase similar to this is 'F\u00e1za 3: \u201cProfesion\u00e1lna diagnostika\u201d', which appears after some initial content. Since there are other contents before this phrase, the section does not start at the very beginning of the page_text.\", 'start_begin': 'no'}"
+  },
+  {
+    "message": "Response: {'thinking': \"The section title is 'Ako sa opravuje bicykel k\u00e1vovarom.' The page_text begins with 'Ako' and then continues with 'sa' and other content. Since the section title does not appear at the very start of the page_text (there are other words before it, such as 'Ako' alone), and the full section title is not matched at the beginning, the section does not start at the beginning of the page_text.\", 'start_begin': 'no'}"
+  },
+  {
+    "message": "Response: {'thinking': \"The section title is 'F\u00e1za 2: Nastavovanie \u201cenergetickej \u00farovne\u201d', which indicates it is the second phase. In the page_text, the first occurrence of a section-like heading is 'F\u00e1za 3:', which appears after some initial content. Since the page_text does not begin with 'F\u00e1za 2:', and there are other contents before 'F\u00e1za 3:', the current section does not start at the beginning of the page_text.\", 'start_begin': 'no'}"
+  },
+  {
+    "message": "Response: {'thinking': \"The section title 'F\u00e1za 4: Fin\u00e1lny v\u00fdsledok' appears towards the end of the provided page_text, after a lengthy description and multiple bullet points. There are multiple contents before this section, including 'F\u00e1za 3: Profesion\u00e1lna diagnostika' and various other descriptions. Since the section title does not appear at the very beginning of the page_text, and there are preceding contents, the section does not start at the beginning.\", 'start_begin': 'no'}"
+  }
+]
