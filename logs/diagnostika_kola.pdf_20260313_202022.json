@@ -1,0 +1,71 @@
+[
+  {
+    "total_page_number": 1
+  },
+  {
+    "total_token": 264
+  },
+  {
+    "toc_content": "T\u00e9ma: Diagnostika r\u00e1mu a centrovanie kolesa  \n \nDiagnostika r\u00e1mu a centrovanie kolesa  \nPo p\u00e1de bicykla je d\u00f4le\u017eit\u00e9 skontrolova\u0165 r\u00e1m  a rovnos\u0165 kolies . \nAk je r\u00e1m prasknut\u00fd alebo deformovan\u00fd, bicykel nie je bezpe\u010dn\u00e9 pou\u017e\u00edva\u0165.  \nPostup kontroly r\u00e1mu:  \n1. Polo\u017e bicykel na stojan a vizu\u00e1lne skontroluj v\u0161etky spoje.  \n2. Skontroluj zvarov\u00e9 spoje okolo hlavov\u00e9ho zlo\u017eenia a stredovej \u010dasti.  \n3. Ak si nie ist\u00fd, pou\u017ei \u0161peci\u00e1lny mera\u010d rovnosti r\u00e1mu.  \nCentrovanie kolesa:  \n\u2022 Umiestni koleso do centrovacej vidlice.  \n\u2022 Pomocou centrovacieho k\u013e\u00fa\u010da ot\u00e1\u010daj \u0161picami v smere alebo proti smeru \nhodinov\u00fdch ru\u010di\u010diek.  \n\u2022 Sleduj h\u00e1dzavos\u0165 r\u00e1fika a postupne ju odstra\u0148uj.  \n\u2022 Pri dotahovan\u00ed pou\u017ei momentov\u00fd k\u013e\u00fa\u010d  \u2013 pr\u00edli\u0161n\u00e9 dotiahnutie m\u00f4\u017ee po\u0161kodi\u0165 \nr\u00e1fik.  \n ",
+    "toc_page_list": [
+      0
+    ],
+    "page_index_given_in_toc": "no"
+  },
+  {
+    "message": "len(group_texts): 1"
+  },
+  {
+    "message": "generate_toc: [{'structure': '1', 'title': 'T\u00e9ma: Diagnostika r\u00e1mu a centrovanie kolesa', 'physical_index': '<physical_index_1>'}, {'structure': '1.1', 'title': 'Diagnostika r\u00e1mu a centrovanie kolesa', 'physical_index': '<physical_index_1>'}, {'structure': '1.1.1', 'title': 'Po p\u00e1de bicykla je d\u00f4le\u017eit\u00e9 skontrolova\u0165 r\u00e1m a rovnos\u0165 kolies .', 'physical_index': '<physical_index_1>'}, {'structure': '1.1.2', 'title': 'Ak je r\u00e1m prasknut\u00fd alebo deformovan\u00fd, bicykel nie je bezpe\u010dn\u00e9 pou\u017e\u00edva\u0165.', 'physical_index': '<physical_index_1>'}, {'structure': '1.1.3', 'title': 'Postup kontroly r\u00e1mu:', 'physical_index': '<physical_index_1>'}, {'structure': '1.1.3.1', 'title': '1. Polo\u017e bicykel na stojan a vizu\u00e1lne skontroluj v\u0161etky spoje.', 'physical_index': '<physical_index_1>'}, {'structure': '1.1.3.2', 'title': '2. Skontroluj zvarov\u00e9 spoje okolo hlavov\u00e9ho zlo\u017eenia a stredovej \u010dasti.', 'physical_index': '<physical_index_1>'}, {'structure': '1.1.3.3', 'title': '3. Ak si nie ist\u00fd, pou\u017ei \u0161peci\u00e1lny mera\u010d rovnosti r\u00e1mu.', 'physical_index': '<physical_index_1>'}, {'structure': '1.1.4', 'title': 'Centrovanie kolesa:', 'physical_index': '<physical_index_1>'}, {'structure': '1.1.4.1', 'title': '\u2022 Umiestni koleso do centrovacej vidlice.', 'physical_index': '<physical_index_1>'}, {'structure': '1.1.4.2', 'title': '\u2022 Pomocou centrovacieho k\u013e\u00fa\u010da ot\u00e1\u010daj \u0161picami v smere alebo proti smeru hod\u00ednov\u00fdch ru\u010di\u010diek.', 'physical_index': '<physical_index_1>'}, {'structure': '1.1.4.3', 'title': '\u2022 Sleduj h\u00e1dzavos\u0165 r\u00e1fika a postupne ju odstra\u0148uj.', 'physical_index': '<physical_index_1>'}, {'structure': '1.1.4.4', 'title': '\u2022 Pri dotahovan\u00ed pou\u017ei momentov\u00fd k\u013e\u00fa\u010d \u2013 pr\u00edli\u0161n\u00e9 dotiahnutie m\u00f4\u017ee po\u0161kodi\u0165 r\u00e1fik.', 'physical_index': '<physical_index_1>'}]"
+  },
+  {
+    "message": "convert_physical_index_to_int: [{'structure': '1', 'title': 'T\u00e9ma: Diagnostika r\u00e1mu a centrovanie kolesa', 'physical_index': 1}, {'structure': '1.1', 'title': 'Diagnostika r\u00e1mu a centrovanie kolesa', 'physical_index': 1}, {'structure': '1.1.1', 'title': 'Po p\u00e1de bicykla je d\u00f4le\u017eit\u00e9 skontrolova\u0165 r\u00e1m a rovnos\u0165 kolies .', 'physical_index': 1}, {'structure': '1.1.2', 'title': 'Ak je r\u00e1m prasknut\u00fd alebo deformovan\u00fd, bicykel nie je bezpe\u010dn\u00e9 pou\u017e\u00edva\u0165.', 'physical_index': 1}, {'structure': '1.1.3', 'title': 'Postup kontroly r\u00e1mu:', 'physical_index': 1}, {'structure': '1.1.3.1', 'title': '1. Polo\u017e bicykel na stojan a vizu\u00e1lne skontroluj v\u0161etky spoje.', 'physical_index': 1}, {'structure': '1.1.3.2', 'title': '2. Skontroluj zvarov\u00e9 spoje okolo hlavov\u00e9ho zlo\u017eenia a stredovej \u010dasti.', 'physical_index': 1}, {'structure': '1.1.3.3', 'title': '3. Ak si nie ist\u00fd, pou\u017ei \u0161peci\u00e1lny mera\u010d rovnosti r\u00e1mu.', 'physical_index': 1}, {'structure': '1.1.4', 'title': 'Centrovanie kolesa:', 'physical_index': 1}, {'structure': '1.1.4.1', 'title': '\u2022 Umiestni koleso do centrovacej vidlice.', 'physical_index': 1}, {'structure': '1.1.4.2', 'title': '\u2022 Pomocou centrovacieho k\u013e\u00fa\u010da ot\u00e1\u010daj \u0161picami v smere alebo proti smeru hod\u00ednov\u00fdch ru\u010di\u010diek.', 'physical_index': 1}, {'structure': '1.1.4.3', 'title': '\u2022 Sleduj h\u00e1dzavos\u0165 r\u00e1fika a postupne ju odstra\u0148uj.', 'physical_index': 1}, {'structure': '1.1.4.4', 'title': '\u2022 Pri dotahovan\u00ed pou\u017ei momentov\u00fd k\u013e\u00fa\u010d \u2013 pr\u00edli\u0161n\u00e9 dotiahnutie m\u00f4\u017ee po\u0161kodi\u0165 r\u00e1fik.', 'physical_index': 1}]"
+  },
+  {
+    "mode": "process_toc_with_page_numbers",
+    "accuracy": 1.0,
+    "incorrect_results": []
+  },
+  {
+    "message": "Checking title appearance in start concurrently"
+  },
+  {
+    "message": "Response: {'thinking': \"The section title 'Centrovanie kolesa:' appears at the beginning of the page_text, immediately followed by the content related to it. There are no other contents before this section title, indicating that the section starts at the beginning of the page_text.\", 'start_begin': 'yes'}"
+  },
+  {
+    "message": "Response: {'thinking': \"The section title 'Diagnostika r\u00e1mu a centrovanie kolesa' appears at the very beginning of the page_text, immediately following the initial phrase 'T\u00e9ma:'. There are no other contents before this title, and it is the first line of the provided text.\", 'start_begin': 'yes'}"
+  },
+  {
+    "message": "Response: {'thinking': \"The section title '\u2022 Pri dotahovan\u00ed pou\u017ei momentov\u00fd k\u013e\u00fa\u010d \u2013 pr\u00edli\u0161n\u00e9 dotiahnutie m\u00f4\u017ee po\u0161kodi\u0165 r\u00e1fik..' appears at the very end of the page_text, after several paragraphs and bullet points. Since there are multiple contents before this section, it does not start at the beginning of the page_text.\", 'start_begin': 'no'}"
+  },
+  {
+    "message": "Response: {'thinking': \"The section title '\u2022 Sleduj h\u00e1dzavos\u0165 r\u00e1fika a postupne ju odstra\u0148uj..' matches the phrase in the page_text 'Sleduj h\u00e1dzavos\u0165 r\u00e1fika a postupne ju odstra\u0148uj.' after ignoring spaces and the bullet point. Since the section title appears exactly at the point where the page_text begins, and there are no other contents before it, the section starts at the beginning of the page_text.\", 'start_begin': 'yes'}"
+  },
+  {
+    "message": "Response: {'thinking': \"The section title is 'Po p\u00e1de bicykla je d\u00f4le\u017eit\u00e9 skontrolova\u0165 r\u00e1m a rovnos\u0165 kolies ..' and the page_text begins with 'T\u00e9ma: Diagnostika r\u00e1mu a centrovanie kolesa'. Since the page_text does not start with the section title or its immediate content, and there are other contents ('T\u00e9ma: Diagnostika r\u00e1mu a centrovanie kolesa') before the section, the section does not start at the beginning of the page_text.\", 'start_begin': 'no'}"
+  },
+  {
+    "message": "Response: {'thinking': \"The section title '\u2022 Pomocou centrovacieho k\u013e\u00fa\u010da ot\u00e1\u010daj \u0161picami v smere alebo proti smeru hod\u00ednov\u00fdch ru\u010di\u010diek..' is not present at the very beginning of the page_text. The page_text starts with 'T\u00e9ma: Diagnostika r\u00e1mu a centrovanie kolesa', which is unrelated and appears before the section. Therefore, the section does not start at the beginning of the page_text.\", 'start_begin': 'no'}"
+  },
+  {
+    "message": "Response: {'thinking': \"The section title 'Ak je r\u00e1m prasknut\u00fd alebo deformovan\u00fd, bicykel nie je bezpe\u010dn\u00e9 pou\u017e\u00edva\u0165..' appears exactly in the page_text after some introductory content. The page_text begins with 'T\u00e9ma: Diagnostika r\u00e1mu a centrovanie kolesa', which is unrelated to the section title. Since there are preceding contents before the section title, the section does not start at the very beginning of the page_text.\", 'start_begin': 'no'}"
+  },
+  {
+    "message": "Response: {'thinking': \"The section title 'T\u00e9ma: Diagnostika r\u00e1mu a centrovanie kolesa' appears at the very beginning of the page_text, immediately followed by the content related to that section. There are no other contents before this title, and the title is present at the start of the text, indicating that the section starts at the beginning of the page_text.\", 'start_begin': 'yes'}"
+  },
+  {
+    "message": "Response: {'thinking': \"The section title 'Postup kontroly r\u00e1mu:' appears exactly as a standalone line after some initial content, with no other content before it. The page_text starts with 'T\u00e9ma: Diagnostika r\u00e1mu a centrovanie kolesa', which is not the section title, and the section title appears later in the text. Therefore, the section does not start at the beginning of the page_text.\", 'start_begin': 'no'}"
+  },
+  {
+    "message": "Response: {'thinking': \"The section title is '3. Ak si nie ist\u00fd, pou\u017ei \u0161peci\u00e1lny mera\u010d rovnosti r\u00e1mu..' which indicates it is a subsection, likely numbered 3. The page_text begins with 'T\u00e9ma: Diagnostika r\u00e1mu a centrovanie kolesa' and then continues with content related to diagnosing and centering wheels, including a paragraph that mentions 'Ak si nie ist\u00fd, pou\u017ei \u0161peci\u00e1lny mera\u010d rovnosti r\u00e1mu.' Since the section title is not at the very beginning of the page_text and there are introductory contents before it, the section does not start at the beginning of the page_text.\", 'start_begin': 'no'}"
+  },
+  {
+    "message": "Response: {'thinking': \"The section title '\u2022 Umiestni koleso do centrovacej vidlice..' appears after the initial content, which is about diagnosing the frame and wheel alignment. The first content in the page_text is 'Diagnostika r\u00e1mu a centrovanie kolesa', and the section title in question is a sub-step within the 'Centrovanie kolesa' section, indicated by the bullet point. Since the section title does not appear at the very beginning of the page_text, and there are preceding contents before it, the section does not start at the beginning.\", 'start_begin': 'no'}"
+  },
+  {
+    "message": "Response: {'thinking': \"The section title '2. Skontroluj zvarov\u00e9 spoje okolo hlavov\u00e9ho zlo\u017eenia a stredovej \u010dasti..' is a specific subsection, but the page_text begins with 'T\u00e9ma: Diagnostika r\u00e1mu a centrovanie kolesa' and then continues with content related to diagnosing the frame and wheel centering. There is no indication that the section title appears at the very start of the page_text; instead, the page starts with a general topic heading and introductory content before any subsection titles. Therefore, the current section does not start at the beginning of the page_text.\", 'start_begin': 'no'}"
+  },
+  {
+    "message": "Response: {'thinking': \"The section title is 'Polo\u017e bicykel na stojan a vizu\u00e1lne skontroluj v\u0161etky spoje..' which matches the beginning of the second step in the page_text after ignoring spaces and formatting differences. The page_text starts with a heading about 'Diagnostika r\u00e1mu a centrovanie kolesa' and then proceeds to detailed steps, with the relevant section starting immediately after the initial headings. Since the section title appears at the start of the relevant instructions and there are no other contents before it, the section appears to start at the beginning of the page_text.\", 'start_begin': 'no'}"
+  }
+]
