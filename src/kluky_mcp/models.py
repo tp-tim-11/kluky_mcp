@@ -22,6 +22,8 @@ class HealthCheckInput(BaseInput):
 
 class NewSessionInput(BaseInput):
     """Input for starting a new session."""
+class LastUserMessageInput(BaseInput):
+    """Input for retrieving the last user message."""
 class SendTTSResponseInput(BaseInput):
     """Input for sending a text-to-speech response."""
 
@@ -29,7 +31,7 @@ class SendTTSResponseInput(BaseInput):
         ...,
         description="Text to be converted to speech and spoken.",
         min_length=1,
-        max_length=1000,
+        max_length=400,
     )
 
 class ListToolsInput(BaseInput):
