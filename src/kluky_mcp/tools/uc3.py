@@ -1,15 +1,138 @@
 """Record-management tools backed by the PostgreSQL repair schema."""
 
+import csv
+import subprocess
+from datetime import datetime
+from io import StringIO
+from pathlib import Path
+
 from fastmcp import FastMCP
 
 from kluky_mcp.db import get_db_connection
 from kluky_mcp.models import (
     AddRecordIfNotExistsInput,
+    ExportAllRecordsToCsvDesktopInput,
     GetAllRecordsForNameInput,
     UpdateRecordInput,
 )
 
 
+def _get_desktop_dir() -> Path:
+    """Best-effort resolution of the user's Desktop directory."""
+    home = Path.home()
+
+    try:
+        result = subprocess.run(
+            ["xdg-user-dir", "DESKTOP"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        candidate = result.stdout.strip()
+        if candidate:
+            path = Path(candidate).expanduser()
+            if path.is_absolute():
+                path.mkdir(parents=True, exist_ok=True)
+                return path
+    except Exception:
+        pass
+
+    desktop = home / "Desktop"
+    desktop.mkdir(parents=True, exist_ok=True)
+    return desktop
+def _build_all_records_csv(cur) -> str:
+    cur.execute(
+        """
+        SELECT
+            rr.id AS record_id,
+            rl.id AS log_id,
+            u.first_name,
+            u.last_name,
+            i.name AS subject_name,
+            rr.first_mention,
+            rr.last_update,
+            rl.dt,
+            p.name AS what_i_am_fixing,
+            rl.work_desc,
+            rl.faults,
+            rl.raw_data,
+            COALESCE(
+                string_agg(DISTINCT res.name, ', ' ORDER BY res.name)
+                    FILTER (WHERE res.id IS NOT NULL),
+                ''
+            ) AS repaired_with
+        FROM users u
+        JOIN repair_records rr
+          ON rr.user_id = u.id
+        JOIN items i
+          ON i.id = rr.item_id
+        LEFT JOIN repair_logs rl
+          ON rl.record_id = rr.id
+        LEFT JOIN parts p
+          ON p.id = rl.part_id
+        LEFT JOIN repair_log_tools rlt
+          ON rlt.log_id = rl.id
+        LEFT JOIN resources res
+          ON res.id = rlt.tool_id
+        GROUP BY
+            rr.id,
+            rl.id,
+            u.first_name,
+            u.last_name,
+            i.name,
+            rr.first_mention,
+            rr.last_update,
+            rl.dt,
+            p.name,
+            rl.work_desc,
+            rl.faults,
+            rl.raw_data
+        ORDER BY
+            COALESCE(rl.dt, rr.last_update) DESC,
+            rr.id DESC,
+            rl.id DESC
+        """
+    )
+
+    rows = cur.fetchall()
+
+    buffer = StringIO()
+    writer = csv.writer(buffer)
+
+    writer.writerow([
+        "record_id",
+        "log_id",
+        "first_name",
+        "last_name",
+        "subject_name",
+        "first_mention",
+        "last_update",
+        "dt",
+        "what_i_am_fixing",
+        "work_desc",
+        "faults",
+        "raw_data",
+        "repaired_with",
+    ])
+
+    for row in rows:
+        writer.writerow([
+            row[0],
+            row[1],
+            row[2],
+            row[3],
+            row[4],
+            row[5].isoformat() if row[5] else "",
+            row[6].isoformat() if row[6] else "",
+            row[7].isoformat() if row[7] else "",
+            row[8] or "",
+            row[9] or "",
+            row[10] or "",
+            row[11] or "",
+            row[12] or "",
+        ])
+
+    return buffer.getvalue()
 def _normalize_label(value: str | None) -> str:
     """Trim, collapse spaces, capitalize each word."""
     text = " ".join((value or "").split())
@@ -506,5 +629,40 @@ def register(mcp: FastMCP) -> None:
         except Exception:
             conn.rollback()
             return "update sa nepodaril"
+        finally:
+            conn.close()
+    @mcp.tool(
+        name="export_all_records_to_csv_desktop",
+        annotations={
+            "title": "Export All Records To CSV Desktop",
+            "readOnlyHint": False,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": True,
+        },
+    )
+    def export_all_records_to_csv_desktop(
+        params: ExportAllRecordsToCsvDesktopInput,
+    ) -> str:
+        conn = get_db_connection()
+        try:
+            with conn.cursor() as cur:
+                csv_content = _build_all_records_csv(cur)
+
+            desktop_dir = _get_desktop_dir()
+
+            if params.filename:
+                filename = params.filename
+            else:
+                ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+                filename = f"servisne_zaznamy_{ts}.csv"
+
+            if not filename.lower().endswith(".csv"):
+                filename = f"{filename}.csv"
+
+            file_path = desktop_dir / filename
+            file_path.write_text(csv_content, encoding="utf-8-sig", newline="")
+
+            return str(file_path)
         finally:
             conn.close()

@@ -3,14 +3,17 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
+from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
 import pytest
 
+import kluky_mcp.tools.uc3 as uc3_module
 from kluky_mcp.db import get_db_connection
 from kluky_mcp.models import (
     AddRecordIfNotExistsInput,
+    ExportAllRecordsToCsvDesktopInput,
     GetAllRecordsForNameInput,
     UpdateRecordInput,
 )
@@ -50,7 +53,10 @@ def uc3_tools() -> dict[str, Any]:
     registry = _ToolRegistry()
     register_uc3(registry)
     return registry.tools
-
+def test_export_all_records_to_csv_desktop_is_registered(
+    uc3_tools: dict[str, Any],
+) -> None:
+    assert "export_all_records_to_csv_desktop" in uc3_tools
 
 @pytest.fixture()
 def existing_tool_names(real_db_connection: Any) -> list[str]:
@@ -68,7 +74,39 @@ def existing_tool_names(real_db_connection: Any) -> list[str]:
     return [row[0] for row in rows]
 
 
+def test_export_all_records_to_csv_desktop_runs_against_real_db(
+    real_db_connection: Any,
+    uc3_tools: dict[str, Any],
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    _ = real_db_connection  # len aby sa test skipol, ak DB nie je dostupna
 
+    monkeypatch.setattr(
+        uc3_module,
+        "_get_desktop_dir",
+        lambda: tmp_path,
+    )
+
+    result = uc3_tools["export_all_records_to_csv_desktop"](
+        ExportAllRecordsToCsvDesktopInput(filename="export_test.csv")
+    )
+
+    output_path = Path(result)
+
+    assert output_path.exists()
+    assert output_path.name == "export_test.csv"
+
+    content = output_path.read_text(encoding="utf-8-sig")
+    lines = content.splitlines()
+
+    assert lines
+    assert lines[0] == (
+        "record_id,log_id,first_name,last_name,subject_name,"
+        "first_mention,last_update,dt,what_i_am_fixing,"
+        "work_desc,faults,raw_data,repaired_with"
+    )
+    assert len(lines) >= 2
 def _cleanup_identity(
     conn: Any,
     first_name: str,
@@ -359,3 +397,5 @@ def test_kluky_update_record_contract(
         assert updated[8] == sorted({*initial_tools, *update_tools})
     finally:
         _cleanup_identity(real_db_connection, first_name, last_name, subject_name)
+
+

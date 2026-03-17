@@ -191,3 +191,12 @@ class UpdateRecordInput(BaseInput):
         default_factory=list,
         description="Optional list of used tools or materials.",
     )
+class ExportAllRecordsToCsvDesktopInput(BaseInput):
+    """Input for exporting all service records to a CSV file on Desktop."""
+
+    filename: str | None = Field(
+        default=None,
+        description="Optional CSV filename. If omitted, a timestamped filename is used.",
+        min_length=1,
+        max_length=255,
+    )
