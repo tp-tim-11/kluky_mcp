@@ -4,12 +4,17 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 from typing import Any
+from unittest.mock import patch
 from uuid import uuid4
 
 import pytest
 
 from kluky_mcp.db import get_db_connection
-from kluky_mcp.models import ChangeToolStatusInput, ListToolsInput, ShowToolPositionInput
+from kluky_mcp.models import (
+    ChangeToolStatusInput,
+    ListToolsInput,
+    ShowToolPositionInput,
+)
 from kluky_mcp.tools.uc1 import register as register_uc1
 from kluky_mcp.tools.uc1 import translate_status
 
@@ -44,7 +49,7 @@ def real_db_connection() -> Iterator[Any]:
 @pytest.fixture()
 def uc1_tools() -> dict[str, Any]:
     registry = _ToolRegistry()
-    register_uc1(registry)
+    register_uc1(registry)  # type: ignore[arg-type]
     return registry.tools
 
 
@@ -93,6 +98,22 @@ def test_kluky_show_tool_position_rejects_unknown_sector(
     assert result == "Sector is not in the current ESP sector mapping."
 
 
+def test_kluky_show_tool_position_blinks_led_on_esp(
+    uc1_tools: dict[str, Any],
+) -> None:
+    """show_tool_position sends correct message to ESP32 and returns response."""
+    with patch("kluky_mcp.tools.uc1.socket.socket") as mock_socket_class:
+        mock_socket = mock_socket_class.return_value.__enter__.return_value
+        mock_socket.recv.return_value = b"LED:1,Blinks:3"
+
+        result = uc1_tools["show_tool_position"](
+            ShowToolPositionInput(sector="A", pin=18, led=5)
+        )
+
+        mock_socket.connect.assert_called_once_with(("192.168.43.101", 8080))
+        mock_socket.sendall.assert_called_once_with(b"PIN:18,LED:5\n")
+        assert "ESP32 A (192.168.43.101) odpoved: LED:1,Blinks:3" in result
+
 
 def test_kluky_change_tool_status_persists_and_can_be_restored(
     real_db_connection: Any,
@@ -115,7 +136,9 @@ def test_kluky_change_tool_status_persists_and_can_be_restored(
         pytest.skip("No non-deleted resource exists in the real DB.")
 
     resource_id, resource_name, original_status, original_borrowed_by = row
-    target_status = "BROKEN" if (original_status or "").upper() != "BROKEN" else "AVAILABLE"
+    target_status = (
+        "BROKEN" if (original_status or "").upper() != "BROKEN" else "AVAILABLE"
+    )
 
     try:
         result = uc1_tools["change_tool_status"](

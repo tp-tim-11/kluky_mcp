@@ -6,11 +6,17 @@ from collections.abc import Iterator
 from dataclasses import dataclass
 from typing import Any, cast
 
+import pytest
 from pydantic import ValidationError
 
 from kluky_mcp.models import GetDocumentInfoInput
 from kluky_mcp.tools.uc02_utils.pageIndexRetrieval import fetch_document_text
-from kluky_mcp.tools.uc2 import _catalog_candidates, _manuals_catalog, _topics_by_manual
+from kluky_mcp.tools.uc2 import (
+    _catalog_candidates,
+    _manuals_catalog,
+    _normalize_queries,
+    _topics_by_manual,
+)
 
 
 def _test_banner(name: str) -> None:
@@ -189,3 +195,18 @@ def test_fetch_document_text_can_resolve_by_manual_name_and_unit() -> None:
     assert payload["unit_no"] == 24
     assert payload["unit_count"] == 1
     assert "unit_no=24" in payload["text"]
+
+
+def test_normalize_queries_validates_and_normalizes() -> None:
+    """_normalize_queries trims, dedupes, and raises on empty input."""
+    result = _normalize_queries(["  hello  ", "world", "hello"])
+    assert result == ["hello", "world"]
+
+    result = _normalize_queries(["test"])
+    assert result == ["test"]
+
+    with pytest.raises(RuntimeError, match="at least one non-empty query"):
+        _normalize_queries([])
+
+    with pytest.raises(RuntimeError, match="at least one non-empty query"):
+        _normalize_queries(["   ", "  "])
