@@ -13,6 +13,7 @@ from kluky_mcp.models import (
 # v esp kode si zoberu staticke ip
 
 import socket
+
 ESP32_MAP: dict[str, str] = {
     "A": "192.168.43.101",
     "B": "192.168.43.102",
@@ -28,6 +29,7 @@ STATUS_TRANSLATION = {
     "AVAILABLE": "Na mieste",
     "BORROWED": "Požičané",
     "BROKEN": "Pokazené",
+    "LOST": "Stratené",
 }
 
 
@@ -107,7 +109,7 @@ def register(mcp: FastMCP) -> None:
         if sector not in ESP32_MAP:
             return "Sector does not exist in the current mapping"
 
-        #return f"nieco sa dojebalo, kazdopadne, tu mas params: \n sector:{sector}, pin:{pin}, led:{led}, ip:{ip}"
+        # return f"nieco sa dojebalo, kazdopadne, tu mas params: \n sector:{sector}, pin:{pin}, led:{led}, ip:{ip}"
 
         message = f"PIN:{pin},LED:{led}\n"
 
