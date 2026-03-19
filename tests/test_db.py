@@ -1,7 +1,5 @@
 """Tests for database connection."""
 
-import pytest
-
 from kluky_mcp.db import get_db_connection
 
 
@@ -14,6 +12,7 @@ def test_db_connection() -> None:
         result = cur.fetchone()
         assert result == (1,)
     conn.close()
+
 
 def test_db_timezone() -> None:
     """Test that database timezone is set correctly."""

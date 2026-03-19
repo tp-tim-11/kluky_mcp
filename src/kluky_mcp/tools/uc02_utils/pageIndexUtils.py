@@ -5,6 +5,7 @@ import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 from markitdown import MarkItDown
 
@@ -62,27 +63,16 @@ SUPABASE_SQL_CREATE = """
 # 2) Pomocné util funkcie (text)
 # --------------------------------
 
-
-def _norm_space(s: str) -> str:
-    return re.sub(r"\s+", " ", s).strip()
-
-
-def stable_doc_id_from_source_path(path: str) -> str:
+def stable_doc_id_from_content(path: str) -> str:
     """
-    Stabilné doc_id podľa source_path (možnosť 1 - verzovanie pod jedným ID).
-    Pri zmene obsahu rovnakého súboru zostáva doc_id rovnaké a reindex prepíše obsah.
+    Stabilné doc_id podľa obsahu súboru.
+    Rovnaký obsah => rovnaké doc_id bez ohľadu na názov/cestu súboru.
     """
-    normalized = os.path.normcase(os.path.normpath(os.path.abspath(path)))
-    return hashlib.sha1(normalized.encode("utf-8")).hexdigest()
-
-
-def stable_doc_id_from_doc_key(doc_key: str) -> str:
-    """
-    Stabilné doc_id podľa externého kľúča dokumentu.
-    Vhodné keď sa mení názov/cesta súboru, ale ide stále o ten istý manuál.
-    """
-    normalized = _norm_space(doc_key).lower()
-    return hashlib.sha1(normalized.encode("utf-8")).hexdigest()
+    digest = hashlib.sha256()
+    with open(path, "rb") as file_obj:
+        for chunk in iter(lambda: file_obj.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def convert_to_markdown(path: str) -> str:
@@ -145,8 +135,8 @@ class PageIndexStore:
     pg_conn: psycopg2 connection alebo iný DB-API 2.0 connection (cursor, execute, executemany, commit).
     """
 
-    def __init__(self, pg_conn: object) -> None:
-        self.pg = pg_conn
+    def __init__(self, pg_conn: Any) -> None:
+        self.pg: Any = pg_conn
 
     def reindex_doc(
         self,
@@ -193,3 +183,11 @@ class PageIndexStore:
                 rows,
             )
         self.pg.commit()
+
+    def doc_exists(self, doc_id: str) -> bool:
+        with self.pg.cursor() as cur:
+            cur.execute(
+                "select 1 from doc_units where doc_id=%s limit 1",
+                (doc_id,),
+            )
+            return cur.fetchone() is not None

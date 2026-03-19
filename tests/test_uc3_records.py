@@ -3,14 +3,17 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
+from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
 import pytest
 
+import kluky_mcp.tools.uc3 as uc3_module
 from kluky_mcp.db import get_db_connection
 from kluky_mcp.models import (
     AddRecordIfNotExistsInput,
+    ExportAllRecordsToCsvDesktopInput,
     GetAllRecordsForNameInput,
     UpdateRecordInput,
 )
@@ -48,8 +51,14 @@ def real_db_connection() -> Iterator[Any]:
 @pytest.fixture()
 def uc3_tools() -> dict[str, Any]:
     registry = _ToolRegistry()
-    register_uc3(registry)
+    register_uc3(registry)  # type: ignore[arg-type]
     return registry.tools
+
+
+def test_export_all_records_to_csv_desktop_is_registered(
+    uc3_tools: dict[str, Any],
+) -> None:
+    assert "export_all_records_to_csv_desktop" in uc3_tools
 
 
 @pytest.fixture()
@@ -67,6 +76,66 @@ def existing_tool_names(real_db_connection: Any) -> list[str]:
         rows = cur.fetchall()
     return [row[0] for row in rows]
 
+
+def test_export_all_records_to_csv_desktop_runs_against_real_db(
+    real_db_connection: Any,
+    uc3_tools: dict[str, Any],
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    existing_tool_names: list[str],
+) -> None:
+    _ = real_db_connection  # len aby sa test skipol, ak DB nie je dostupna
+
+    monkeypatch.setattr(
+        uc3_module,
+        "_get_desktop_dir",
+        lambda: tmp_path,
+    )
+
+    first_name, last_name, subject_name = _make_identity()
+    what_i_am_fixing = "retaz"
+    raw_text = "Export test - vymena retaze"
+    repaired_with = existing_tool_names[:1] if existing_tool_names else []
+
+    _cleanup_identity(real_db_connection, first_name, last_name, subject_name)
+
+    try:
+        add_result = uc3_tools["add_record_if_not_exists"](
+            AddRecordIfNotExistsInput(
+                first_name=first_name,
+                last_name=last_name,
+                subject_name=subject_name,
+                what_i_am_fixing=what_i_am_fixing,
+                raw_text=raw_text,
+                repaired_with=repaired_with,
+            )
+        )
+        assert add_result == "pridal som"
+
+        result = uc3_tools["export_all_records_to_csv_desktop"](
+            ExportAllRecordsToCsvDesktopInput(filename="export_test.csv")
+        )
+
+        output_path = Path(result)
+
+        assert output_path.exists()
+        assert output_path.name == "export_test.csv"
+
+        content = output_path.read_text(encoding="utf-8-sig")
+        lines = content.splitlines()
+
+        assert lines
+        assert lines[0] == (
+            "record_id,log_id,first_name,last_name,subject_name,"
+            "first_mention,last_update,dt,what_i_am_fixing,"
+            "work_desc,faults,raw_data,repaired_with"
+        )
+        assert len(lines) >= 2
+        csv_body = "\n".join(lines[1:])
+        assert first_name in csv_body
+        assert subject_name in csv_body
+    finally:
+        _cleanup_identity(real_db_connection, first_name, last_name, subject_name)
 
 
 def _cleanup_identity(
@@ -135,14 +204,12 @@ def _cleanup_identity(
     conn.commit()
 
 
-
 def _make_identity() -> tuple[str, str, str]:
     suffix = uuid4().hex[:10]
     first_name = _normalize_label(f"uc3first{suffix}")
     last_name = _normalize_label(f"uc3last{suffix}")
     subject_name = _normalize_label(f"uc3bike{suffix}")
     return first_name, last_name, subject_name
-
 
 
 def _fetch_latest_record_row(
@@ -194,7 +261,6 @@ def _fetch_latest_record_row(
         return cur.fetchone()
 
 
-
 def test_kluky_add_record_if_not_exists_contract(
     real_db_connection: Any,
     uc3_tools: dict[str, Any],
@@ -240,7 +306,6 @@ def test_kluky_add_record_if_not_exists_contract(
         _cleanup_identity(real_db_connection, first_name, last_name, subject_name)
 
 
-
 def test_kluky_get_all_records_for_name_contract(
     real_db_connection: Any,
     uc3_tools: dict[str, Any],
@@ -271,7 +336,9 @@ def test_kluky_get_all_records_for_name_contract(
             GetAllRecordsForNameInput(first_name=first_name, last_name=last_name)
         )
 
-        matching = [record for record in records if record["subject_name"] == subject_name]
+        matching = [
+            record for record in records if record["subject_name"] == subject_name
+        ]
         assert matching
 
         latest = matching[0]
@@ -289,7 +356,6 @@ def test_kluky_get_all_records_for_name_contract(
         assert latest["dt"]
     finally:
         _cleanup_identity(real_db_connection, first_name, last_name, subject_name)
-
 
 
 def test_kluky_update_record_contract(
