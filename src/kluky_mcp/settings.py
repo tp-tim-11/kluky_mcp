@@ -1,5 +1,8 @@
 """Application settings."""
 
+from pathlib import Path
+
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -12,11 +15,33 @@ class Settings(BaseSettings):
     db_sslmode: str = "prefer"
     db_pool_mode: str = "session"
 
-    open_ai_api_key: str = ""
-    open_ai_api_base: str = ""
+    openai_api_key: str = Field(
+        default="",
+        validation_alias=AliasChoices(
+            "OPENAI_API_KEY",
+            "openai_api_key",
+            "OPEN_AI_API_KEY",
+            "open_ai_api_key",
+            "CHATGPT_API_KEY",
+        ),
+    )
+    openai_api_base: str = Field(
+        default="",
+        validation_alias=AliasChoices(
+            "OPENAI_API_BASE",
+            "openai_api_base",
+            "OPEN_AI_API_BASE",
+            "open_ai_api_base",
+            "OPENAI_BASE_URL",
+        ),
+    )
     pageindex_model: str = "gpt-4.1-nano-fiit"
 
-    model_config = SettingsConfigDict(env_file=".env", env_prefix="", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=Path(__file__).parent.parent.parent.parent / ".env",
+        env_prefix="",
+        extra="ignore",
+    )
 
 
 settings = Settings()

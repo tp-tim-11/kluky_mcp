@@ -9,8 +9,6 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-from pageindex import config, page_index_main
-from pageindex.page_index_md import md_to_tree
 from PyPDF2 import PdfReader
 
 from kluky_mcp.db import get_db_connection
@@ -25,17 +23,22 @@ from .pageIndexUtils import (
 
 
 def _ensure_openai_env() -> None:
+    api_key = settings.openai_api_key.strip()
+    if not api_key:
+        raise RuntimeError("Missing API key. Set OPENAI_API_KEY.")
 
-    if not settings.open_ai_api_key:
-        print(settings.open_ai_api_key)
-        raise RuntimeError(
-            f"Missing API key. Set open_ai_api_key. {settings.open_ai_api_key}, {settings.open_ai_api_base}"
-        )
+    os.environ["OPENAI_API_KEY"] = api_key
+    os.environ.pop("open_ai_api_key", None)
+    os.environ.pop("CHATGPT_API_KEY", None)
 
-    os.environ.setdefault("open_ai_api_key", settings.open_ai_api_key)
+    base_url = settings.openai_api_base.strip()
+    if base_url:
+        os.environ["OPENAI_API_BASE"] = base_url
+    else:
+        os.environ.pop("OPENAI_API_BASE", None)
 
-    base_url = settings.open_ai_api_base
-    os.environ.setdefault("open_ai_api_base", base_url)
+    os.environ.pop("open_ai_api_base", None)
+    os.environ.pop("OPENAI_BASE_URL", None)
 
 
 def _run_pageindex_document(input_path: str) -> dict[str, Any]:
@@ -44,6 +47,8 @@ def _run_pageindex_document(input_path: str) -> dict[str, Any]:
         raise RuntimeError(f"Input file does not exist: {input_path}")
 
     _ensure_openai_env()
+    from pageindex import config, page_index_main
+    from pageindex.page_index_md import md_to_tree
 
     model_name = os.getenv("PAGEINDEX_MODEL", "").strip() or settings.pageindex_model
 
