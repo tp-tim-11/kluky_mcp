@@ -9,8 +9,6 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-from pageindex import config, page_index_main
-from pageindex.page_index_md import md_to_tree
 from PyPDF2 import PdfReader
 
 from kluky_mcp.db import get_db_connection
@@ -20,23 +18,27 @@ from .pageIndexUtils import (
     DocUnit,
     PageIndexStore,
     convert_to_markdown,
-    stable_doc_id_from_doc_key,
-    stable_doc_id_from_source_path,
+    stable_doc_id_from_content,
 )
 
 
 def _ensure_openai_env() -> None:
+    api_key = settings.openai_api_key.strip()
+    if not api_key:
+        raise RuntimeError("Missing API key. Set OPENAI_API_KEY.")
 
-    if not settings.open_ai_api_key:
-        print(settings.open_ai_api_key)
-        raise RuntimeError(
-            f"Missing API key. Set open_ai_api_key. {settings.open_ai_api_key}, {settings.open_ai_api_base}"
-        )
+    os.environ["OPENAI_API_KEY"] = api_key
+    os.environ.pop("open_ai_api_key", None)
+    os.environ.pop("CHATGPT_API_KEY", None)
 
-    os.environ.setdefault("OPENAI_API_KEY", settings.open_ai_api_key)
+    base_url = settings.openai_api_base.strip()
+    if base_url:
+        os.environ["OPENAI_API_BASE"] = base_url
+    else:
+        os.environ.pop("OPENAI_API_BASE", None)
 
-    base_url = settings.open_ai_api_base
-    os.environ.setdefault("OPENAI_BASE_URL", base_url)
+    os.environ.pop("open_ai_api_base", None)
+    os.environ.pop("OPENAI_BASE_URL", None)
 
 
 def _run_pageindex_document(input_path: str) -> dict[str, Any]:
@@ -45,6 +47,8 @@ def _run_pageindex_document(input_path: str) -> dict[str, Any]:
         raise RuntimeError(f"Input file does not exist: {input_path}")
 
     _ensure_openai_env()
+    from pageindex import config, page_index_main
+    from pageindex.page_index_md import md_to_tree
 
     model_name = os.getenv("PAGEINDEX_MODEL", "").strip() or settings.pageindex_model
 
@@ -185,12 +189,14 @@ def _extract_page_range(node: dict[str, Any]) -> tuple[int | None, int | None]:
         "page_index",
     )
 
-    metadata = node.get("metadata") if isinstance(node.get("metadata"), dict) else {}
+    raw_metadata = node.get("metadata")
 
     def get_value(key: str) -> object:
         if key in node:
             return node.get(key)
-        return metadata.get(key)
+        if isinstance(raw_metadata, dict):
+            return raw_metadata.get(key)
+        return None
 
     for key in direct_start_keys:
         value = _parse_nonnegative_int(get_value(key))
@@ -212,7 +218,9 @@ def _extract_page_range(node: dict[str, Any]) -> tuple[int | None, int | None]:
                 page_end = value
                 break
 
-    pages = node.get("pages") or metadata.get("pages")
+    pages = node.get("pages")
+    if pages is None and isinstance(raw_metadata, dict):
+        pages = raw_metadata.get("pages")
     if page_start is None and page_end is None and isinstance(pages, list):
         parsed_pages = sorted(
             p for p in (_parse_nonnegative_int(item) for item in pages) if p is not None
@@ -497,15 +505,27 @@ def ingest_with_pageindex(
     include_tree_json: bool = False,
     preview_units_limit: int = 3,
 ) -> dict[str, Any]:
-    tree = _run_pageindex_document(input_path)
+    doc_id = stable_doc_id_from_content(input_path)
     source_type = Path(input_path).suffix.lower().lstrip(".") or "unknown"
     manual_name = Path(input_path).name
 
-    doc_id = (
-        stable_doc_id_from_doc_key(doc_key)
-        if doc_key
-        else stable_doc_id_from_source_path(input_path)
-    )
+    conn = get_db_connection()
+    store = PageIndexStore(conn)
+    try:
+        if store.doc_exists(doc_id):
+            return {
+                "doc_id": doc_id,
+                "doc_key": doc_key,
+                "source_path": input_path,
+                "manual_name": manual_name,
+                "source_type": source_type,
+                "skipped": True,
+                "reason": "document_already_ingested",
+            }
+    finally:
+        conn.close()
+
+    tree = _run_pageindex_document(input_path)
 
     units = _flatten_tree_to_units(tree)
     if not units:
