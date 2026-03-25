@@ -9,6 +9,10 @@ from kluky_mcp.models import (
     ShowToolPositionInput,
 )
 
+# citanie json file
+import json
+import os
+
 # adresy pre kazde ESP na wifine
 # v esp kode si zoberu staticke ip
 
@@ -31,6 +35,17 @@ STATUS_TRANSLATION = {
     "BROKEN": "Pokazené",
     "LOST": "Stratené",
 }
+
+def check_led_status() -> bool:
+    flag_path = os.path.join(os.path.dirname(__file__), "led_flag.json")
+    try:
+        with open(flag_path, "r") as f:
+            #ak chyba value - blikame
+            return json.load(f).get("leds_enabled", True)
+        
+    #zmizol file? blikame 
+    except Exception:
+        return True 
 
 
 def translate_status(status: str | None) -> str:
@@ -83,6 +98,39 @@ def register(mcp: FastMCP) -> None:
             conn.close()
 
     @mcp.tool(
+    name="get_led_flag",
+    annotations={
+        "title": "Get LED Flag",
+        "readOnlyHint": True,
+        "destructiveHint": False,
+        "idempotentHint": True,
+        "openWorldHint": False,
+    },
+    )
+    def get_led_flag() -> str:
+        """Returns whether LED positioning is currently enabled or disabled."""
+        enabled = check_led_status()
+        return "LED osvetlenie je zapnuté." if enabled else "LED osvetlenie je vypnuté."
+
+
+    @mcp.tool(
+        name="set_led_flag",
+        annotations={
+            "title": "Set LED Flag",
+            "readOnlyHint": False,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+    )
+    def set_led_flag(value: bool) -> str:
+        """Enables or disables LED positioning."""
+        flag_path = os.path.join(os.path.dirname(__file__), "led_flag.json")
+        with open(flag_path, "w") as f:
+            json.dump({"leds_enabled": value}, f)
+        return "LED osvetlenie zapnuté." if value else "LED osvetlenie vypnuté."
+    
+    @mcp.tool(
         name="show_tool_position",
         annotations={
             "title": "Show Tool Position",
@@ -92,8 +140,12 @@ def register(mcp: FastMCP) -> None:
             "openWorldHint": False,
         },
     )
+
     def show_tool_position(params: ShowToolPositionInput) -> str:
         """Blinks the LED above the tool on the correct ESP32 strip."""
+
+        if not check_led_status():
+            return "Ledky sú vypnuté."
 
         sector = params.sector.upper()
         pin = params.pin
