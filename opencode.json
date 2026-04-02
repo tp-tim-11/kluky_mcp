@@ -16,17 +16,15 @@
         "baseURL": "https://litellm.blockfinlab.xyz"
       },
       "models": {
-        "gpt-4.1-nano-fiit": { "name": "gpt-4.1-nano-fiit" },
-        "gpt-4.1-mini-fiit": { "name": "gpt-4.1-mini-fiit" },
-        "gpt-5-fiit": { "name": "gpt-5-fiit" },
-        "claude-haiku-4.5-fiit": { "name": "claude-haiku-4.5-fiit" },
-        "gpt-4.1-fiit": { "name": "gpt-4.1-fiit" },
-        "claude-sonnet-4.5-fiit": { "name": "claude-sonnet-4.5-fiit" },
         "whisper-fiit": { "name": "whisper-fiit" },
-        "gpt-4o-mini-transcribe-fiit": {
-          "name": "gpt-4o-mini-transcribe-fiit"
-        },
-        "gpt-4o-transcribe-fiit": { "name": "gpt-4o-transcribe-fiit" }
+        "gpt-4o-mini-transcribe-fiit": { "name": "gpt-4o-mini-transcribe-fiit" },
+        "gpt-4o-transcribe-fiit": { "name": "gpt-4o-transcribe-fiit" },
+        "gpt-5.4-nano-fiit": { "name": "gpt-5.4-nano-fiit" },
+        "gpt-5.4-mini-fiit": { "name": "gpt-5.4-mini-fiit" },
+        "gpt-5.4-fiit": { "name": "gpt-5.4-fiit" },
+        "gpt-4.1-fiit": { "name": "gpt-4.1-fiit" },
+        "gpt-4.1-mini-fiit": { "name": "gpt-4.1-mini-fiit" },
+        "gpt-4.1-nano-fiit": { "name": "gpt-4.1-nano-fiit" }
       }
     }
   }
