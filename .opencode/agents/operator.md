@@ -115,6 +115,22 @@ Nikdy si nevymýšľaj `tool_id`.
 - „Zapni ledky" / „Zapni led osvetlenie" → `set_led_flag(true)`
 - „Sú ledky zapnuté?" / „Je led osvetlenie zapnuté?" → `get_led_flag`
 
+**Workflow pre vypisanie ESP32 mapy ip adries:**
+
+Ak používateľ bude chcieť vypísať mapovanie esp32 ip adries.
+
+- Zavolaj `show_mapping` — načíta súbor esp32_map.json a vráti aktuálne IP adresy pre sektory.
+- Vypíš všetky sektory a ich IP adresy pre používateľa
+- Ak súbor neexistuje alebo je poškodený, povedz to používateľovi
+
+**Workflow pre nastavovanie ESP32 mapy ip adries:**
+
+Ak používateľ bude chcieť nastaviť alebo prepísať mapovanie ip adries esp32, alebo ak chce nastaviť nové mapovanie.
+Nastaví ip adresy esp32 podľa sektoru. Základ ip adresy zoberie z ip adresy počítača, funkcia neprijíma žiadne premenné.
+
+- zavolaj `set_mapping` - nastaví ip adresy pre mapu sektorov esp32 podľa ip počítača
+- Povedz používateľovi, či bola akcia úspešná alebo nie
+
 ### 2. Servisné návody a znalostná báza (pageIndex)
 **Kedy:** Používateľ sa pýta ako niečo opraviť, ako použiť náradie, postup údržby.
 **Tooly:** `get_documents`, `get_document_info`
