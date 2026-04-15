@@ -8,6 +8,17 @@ Všetky inštrukcie sú rozdelené do modulárnej štruktúry v `.opencode/`:
 
 | **Operátor** | `agents/operator.md` | Hlavný agent — obsluhuje požiadavky používateľov cez MCP tooly |
 
+### Skills (`.opencode/skills/`)
+
+| **Skill** | **Súbor** | **Účel** |
+|-----------|-----------|----------|
+| `tool-location` | `skills/tool-location/SKILL.md` | Vyhľadávanie náradia a dielov |
+| `tool-lending` | `skills/tool-lending/SKILL.md` | Požičiavanie a stav náradia |
+| `led-control` | `skills/led-control/SKILL.md` | Ovládanie LED osvetlenia |
+| `esp32-management` | `skills/esp32-management/SKILL.md` | ESP32 IP mapovanie |
+| `documentation-lookup` | `skills/documentation-lookup/SKILL.md` | Vyhľadávanie v servisných príručkách |
+| `service-records` | `skills/service-records/SKILL.md` | Servisné záznamy a história |
+
 ### Tools (`.src/kluky_mcp/tools`)
 
 ## Rýchly prehľad
