@@ -12,18 +12,19 @@ from kluky_mcp.models import (
 # citanie json file
 import json
 import os
+import ipaddress
 
 # adresy pre kazde ESP na wifine
 # v esp kode si zoberu staticke ip
 
 import socket
 
-ESP32_MAP: dict[str, str] = {
-    "A": "192.168.43.101",
-    "B": "192.168.43.102",
-    "C": "192.168.43.103",
-    "D": "192.168.43.104",
-}
+# ESP32_MAP: dict[str, str] = {
+#     "A": "192.168.43.101",
+#     "B": "192.168.43.102",
+#     "C": "192.168.43.103",
+#     "D": "192.168.43.104",
+# }
 
 # server <-> esp = tcp comm
 ESP32_PORT = 8080
@@ -46,6 +47,21 @@ def check_led_status() -> bool:
     #zmizol file? blikame 
     except Exception:
         return True 
+    
+def get_mapping(sector) -> str:
+    esp_map_path= os.path.join(os.path.dirname(__file__), "esp32_map.json")
+    try:
+        with open(esp_map_path, "r") as f:
+            esp_map = json.load(f)
+        
+        return esp_map.get(sector)
+    
+    except FileNotFoundError:
+        print("Mapping file not found")
+    except json.JSONDecodeError:
+        print("Invalid JSON format")
+    
+    return None
 
 
 def translate_status(status: str | None) -> str:
@@ -129,7 +145,64 @@ def register(mcp: FastMCP) -> None:
         with open(flag_path, "w") as f:
             json.dump({"leds_enabled": value}, f)
         return "LED osvetlenie zapnuté." if value else "LED osvetlenie vypnuté."
-    
+
+    @mcp.tool(
+        name="show_mapping",
+        annotations={
+            "title": "Show ESP32 Mapping",
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+    )
+    #nech sa cez klukyho daju vypisat ipcky
+    def show_mapping():
+        esp_map_path= os.path.join(os.path.dirname(__file__), "esp32_map.json")
+        try:
+            with open(esp_map_path, "r") as f:
+                esp_map = json.load(f)
+                return esp_map
+
+        except FileNotFoundError:
+            print("Mapping file not found")
+        except json.JSONDecodeError:
+            print("Invalid JSON format")
+
+        return None
+    @mcp.tool(
+        name="set_mapping",
+        annotations={
+            "title": "Set ESP32 Mapping",
+            "readOnlyHint": False,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+    )
+    def set_mapping():
+        hostname = socket.gethostname()
+        ip = socket.gethostbyname(hostname)
+
+        #na ziskanie subnet masky treba nejaku lib nainstalovat
+        #neviem presne kde sa to robi, tak dam takuto basic masku
+        subnet_mask = "255.255.255.0"
+
+        network = ipaddress.IPv4Network(f"{ip}/{subnet_mask}", strict=False)
+        base_int = int(network.network_address)
+
+        new_mapping = {
+            "A": str(ipaddress.IPv4Address(base_int + 101)),
+            "B": str(ipaddress.IPv4Address(base_int + 102)),
+            "C": str(ipaddress.IPv4Address(base_int + 103)),
+            "D": str(ipaddress.IPv4Address(base_int + 104)),
+        }
+
+        file_path = os.path.join(os.path.dirname(__file__), "esp32_map.json")
+        with open(file_path, "w") as f:
+            json.dump(new_mapping, f, indent=4)
+            return new_mapping
+
     @mcp.tool(
         name="show_tool_position",
         annotations={
@@ -151,15 +224,14 @@ def register(mcp: FastMCP) -> None:
         pin = params.pin
         led = params.led
         # sector letter -> ESP32 ip
-        ip = ESP32_MAP.get(sector)
+        #ip= get_mapping(sector)
+        ip = get_mapping(sector)
 
         # zakladne checks
         if ip is None:
             return "Sector is not in the current ESP sector mapping."
         if led > 63:
             return "Led number does not exist on the current led strips"
-        if sector not in ESP32_MAP:
-            return "Sector does not exist in the current mapping"
 
         # return f"nieco sa dojebalo, kazdopadne, tu mas params: \n sector:{sector}, pin:{pin}, led:{led}, ip:{ip}"
 
