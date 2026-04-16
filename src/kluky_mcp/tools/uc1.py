@@ -180,7 +180,7 @@ def register(mcp: FastMCP) -> None:
             "openWorldHint": False,
         },
     )
-    def set_mapping():
+    def set_mapping(sector_num: int):
         hostname = socket.gethostname()
         ip = socket.gethostbyname(hostname)
 
@@ -191,12 +191,18 @@ def register(mcp: FastMCP) -> None:
         network = ipaddress.IPv4Network(f"{ip}/{subnet_mask}", strict=False)
         base_int = int(network.network_address)
 
-        new_mapping = {
-            "A": str(ipaddress.IPv4Address(base_int + 101)),
-            "B": str(ipaddress.IPv4Address(base_int + 102)),
-            "C": str(ipaddress.IPv4Address(base_int + 103)),
-            "D": str(ipaddress.IPv4Address(base_int + 104)),
-        }
+        #prerobil som to, nech si moze pouzivatel povedat kolko sektorov chce namapovat
+        new_mapping={}
+        for i in range(1, sector_num+1):
+            letter=chr(64+i)
+            new_mapping[letter] = str(ipaddress.IPv4Address(base_int + (100 + i)))
+
+        # new_mapping = {
+        #     "A": str(ipaddress.IPv4Address(base_int + 101)),
+        #     "B": str(ipaddress.IPv4Address(base_int + 102)),
+        #     "C": str(ipaddress.IPv4Address(base_int + 103)),
+        #     "D": str(ipaddress.IPv4Address(base_int + 104)),
+        # }
 
         file_path = os.path.join(os.path.dirname(__file__), "esp32_map.json")
         with open(file_path, "w") as f:

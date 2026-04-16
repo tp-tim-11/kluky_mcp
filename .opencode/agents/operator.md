@@ -136,9 +136,11 @@ Ak používateľ bude chcieť vypísať mapovanie esp32 ip adries.
 **Workflow pre nastavovanie ESP32 mapy ip adries:**
 
 Ak používateľ bude chcieť nastaviť alebo prepísať mapovanie ip adries esp32, alebo ak chce nastaviť nové mapovanie.
-Nastaví ip adresy esp32 podľa sektoru. Základ ip adresy zoberie z ip adresy počítača, funkcia neprijíma žiadne premenné.
+Nastaví ip adresy esp32 podľa sektoru. Základ ip adresy zoberie z ip adresy počítača, funkcia neprijíma žiadne premenné. 
+Používateľ povie koľko sektorov chce namapovať. Počet sektorov použiješ ako parameter, ktorý vstupuje do funkcie set_mapping.
+Ak používateľ nepovie počet sektorov na namapovanie, opýtaj sa ho na počet sektorov, ktoré máš namapovať.
 
-- zavolaj `set_mapping` - nastaví ip adresy pre mapu sektorov esp32 podľa ip počítača
+- zavolaj `set_mapping` s parametrom sector_num - nastaví ip adresy pre mapu sektorov esp32 podľa ip počítača
 - Povedz používateľovi, či bola akcia úspešná alebo nie
 
 ### 2. Servisné návody a znalostná báza (pageIndex)
