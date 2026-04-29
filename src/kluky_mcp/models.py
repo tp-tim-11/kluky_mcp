@@ -22,8 +22,12 @@ class HealthCheckInput(BaseInput):
 
 class NewSessionInput(BaseInput):
     """Input for starting a new session."""
+
 class LastUserMessageInput(BaseInput):
     """Input for retrieving the last user message."""
+
+class CloseWorkshopInput(BaseInput):
+    """Input for closing the workshop session."""
 class SendTTSResponseInput(BaseInput):
     """Input for sending a text-to-speech response."""
 

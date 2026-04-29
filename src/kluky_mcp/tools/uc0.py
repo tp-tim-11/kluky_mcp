@@ -1,7 +1,8 @@
 import requests
 from fastmcp import FastMCP
 
-from kluky_mcp.models import LastUserMessageInput, NewSessionInput, SendTTSResponseInput
+from kluky_mcp.models import CloseWorkshopInput, LastUserMessageInput, NewSessionInput, SendTTSResponseInput
+from kluky_mcp.tts_logger import LOG_FILE, log
 
 
 def register(mcp: FastMCP) -> None:
@@ -12,25 +13,45 @@ def register(mcp: FastMCP) -> None:
         """Clear the current conversation and start a new session."""
 
         response: requests.Response = requests.get(url="http://localhost:8321/v1/new_session")
+        return _return_response(response)
 
-        return return_response(response)
     @mcp.tool(name="last_user_message")
     def last_user_message(params: LastUserMessageInput) -> str:
         """Get the last user message."""
 
         response: requests.Response = requests.get(url="http://localhost:8321/v1/last_user_message")
-
-        return return_response(response)
+        return _return_response(response)
 
     @mcp.tool(name="send_tts_response")
     def send_tts_response(params: SendTTSResponseInput) -> str:
         """Send a text-to-speech response."""
-
+        log("TTS", params.text)
         response: requests.Response = requests.post(url="http://localhost:8321/v1/speak", json={"text": params.text})
-
-        return return_response(response)
-    def return_response(response: requests.Response) -> str:
         if response.status_code == 200:
             return response.text
-        else:
-            return f"Request failed: {response.status_code} {response.text}"
+        return f"Request failed: {response.status_code} {response.text}"
+
+    @mcp.tool(name="close_workshop")
+    def close_workshop(params: CloseWorkshopInput) -> str:
+        """Zatvor dielňu: ulož ZATVORENIE do logu a vráť všetky TTS správy od posledného zatvorenia."""
+
+        # Načítaj riadky od posledného ZATVORENIE
+        lines: list[str] = []
+        if LOG_FILE.exists():
+            all_lines = LOG_FILE.read_text(encoding="utf-8").splitlines()
+            last_close = -1
+            for i, line in enumerate(all_lines):
+                if "| ZATVORENIE |" in line:
+                    last_close = i
+            lines = all_lines[last_close + 1:]
+
+        log("ZATVORENIE", "Dielňa zatvorená")
+
+        if not lines:
+            return "Žiadne TTS správy od posledného zatvorenia dielne."
+        return "Správy od posledného zatvorenia:\n" + "\n".join(lines)
+
+    def _return_response(response: requests.Response) -> str:
+        if response.status_code == 200:
+            return response.text
+        return f"Request failed: {response.status_code} {response.text}"
