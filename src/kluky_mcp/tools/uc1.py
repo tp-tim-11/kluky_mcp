@@ -14,6 +14,10 @@ import json
 import os
 import ipaddress
 
+from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Any
+
 # adresy pre kazde ESP na wifine
 # v esp kode si zoberu staticke ip
 
@@ -27,6 +31,7 @@ import socket
 # }
 
 # server <-> esp = tcp comm
+ESP_MAP_PATH = Path(__file__).parent / "esp32_map.json"
 ESP32_PORT = 8080
 ESP32_TIMEOUT = 5
 
@@ -36,6 +41,64 @@ STATUS_TRANSLATION = {
     "BROKEN": "Pokazené",
     "LOST": "Stratené",
 }
+
+
+def load_esp32_map() -> dict[str, str]:
+    with ESP_MAP_PATH.open("r", encoding="utf-8") as file:
+        data = json.load(file)
+
+    if not isinstance(data, dict):
+        raise ValueError("esp32_map.json must contain a JSON object.")
+
+    return {str(sector): str(ip) for sector, ip in data.items()}
+
+
+def send_command_to_one_esp32(
+    sector: str,
+    ip: str,
+    command: str
+) -> dict[str, Any]:
+    message = f"{command}\n"
+
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.settimeout(ESP32_TIMEOUT)
+            s.connect((ip, ESP32_PORT))
+            s.sendall(message.encode("utf-8"))
+
+            response = s.recv(1024).decode("utf-8", errors="replace").strip()
+
+            return {
+                "sector": sector,
+                "ip": ip,
+                "success": True,
+                "sent": command,
+                "response": response
+            }
+
+    except TimeoutError:
+        return {
+            "sector": sector,
+            "ip": ip,
+            "success": False,
+            "error": f"ESP32 did not respond within {ESP32_TIMEOUT}s"
+        }
+
+    except ConnectionRefusedError:
+        return {
+            "sector": sector,
+            "ip": ip,
+            "success": False,
+            "error": "ESP32 refused connection"
+        }
+
+    except OSError as e:
+        return {
+            "sector": sector,
+            "ip": ip,
+            "success": False,
+            "error": str(e)
+        }
 
 def check_led_status() -> bool:
     flag_path = os.path.join(os.path.dirname(__file__), "led_flag.json")
@@ -112,6 +175,53 @@ def register(mcp: FastMCP) -> None:
 
         finally:
             conn.close()
+
+    @mcp.tool(
+    name="open_workshop",
+    annotations={
+        "title": "Open workshop",
+        "readOnlyHint": True,
+        "destructiveHint": False,
+        "idempotentHint": True,
+        "openWorldHint": False,
+    },
+    )
+    
+    def open_workshop() -> dict[str, Any]:
+        esp32_map = load_esp32_map()
+        command = "startup"
+
+        results = []
+
+        with ThreadPoolExecutor(max_workers=len(esp32_map)) as executor:
+            future_to_sector = {
+                executor.submit(
+                    send_command_to_one_esp32,
+                    sector,
+                    ip,
+                    command
+                ): sector
+                for sector, ip in esp32_map.items()
+            }
+
+            for future in as_completed(future_to_sector):
+                results.append(future.result())
+
+        return {
+            "command": command,
+            "results": results,
+            "successful": [
+                result["sector"]
+                for result in results
+                if result["success"]
+            ],
+            "failed": [
+                result["sector"]
+                for result in results
+                if not result["success"]
+            ]
+        }
+
 
     @mcp.tool(
     name="get_led_flag",
